@@ -1,5 +1,10 @@
 package rock;
 
+import rock.token.IdToken;
+import rock.token.NumToken;
+import rock.token.StrToken;
+import rock.token.Token;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -9,9 +14,10 @@ import java.util.regex.Pattern;
 
 public class Lexer {
 
-    public static final String regexPat = "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\\|\\||\\p{Punct})?";
+    public static final String regexPat = "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|[A-Z_a-z][A-Z_a-z0-9]*|!=|==|<=|>=|&&|\\|\\||\\p{Punct})?";
     private Pattern pattern = Pattern.compile(regexPat);
     private ArrayList<Token> queue = new ArrayList<>();
+    private int pointer = 0;
     private boolean hasMore;
     private LineNumberReader reader;
 
@@ -22,16 +28,16 @@ public class Lexer {
 
 
     public Token read() throws RockException {
-        if (fillQueue(1)) {
-            return queue.remove(0);
+        if (fillQueue(pointer)) {
+            return queue.get(pointer++);
         } else {
             return Token.EOF;
         }
     }
 
     public Token peek(int i) throws RockException {
-        if (fillQueue(i)) {
-            return queue.get(i);
+        if (fillQueue(pointer + i)) {
+            return queue.get(pointer + i);
         } else {
             return Token.EOF;
         }
@@ -39,7 +45,7 @@ public class Lexer {
 
 
     private boolean fillQueue(int i) throws RockException {
-        while (i > queue.size()) {
+        while (i >= queue.size()) {
             if (hasMore) {
                 readLine();
             } else {
@@ -110,5 +116,13 @@ public class Lexer {
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    public int pointer() {
+        return pointer;
+    }
+
+    public void recovery(int check) {
+        pointer = check;
     }
 }

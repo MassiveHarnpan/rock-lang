@@ -1,5 +1,7 @@
 package rock;
 
+import rock.token.Token;
+
 import java.io.IOException;
 
 public class RockException extends Exception {
@@ -9,7 +11,7 @@ public class RockException extends Exception {
         if (token == Token.EOF) {
             return "EOF";
         } else {
-            return "\"" + token.getText() + "\" at line:" + token.getLineNumber();
+            return "\"" + token.getStr() + "\" at line:" + token.getLineNumber();
         }
     }
 

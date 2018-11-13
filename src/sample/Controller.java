@@ -3,9 +3,13 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import rock.Lexer;
 import rock.RockException;
-import rock.Token;
+import rock.ast.ASTree;
+import rock.parser.BasicParser;
+import rock.parser.Parser;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -26,16 +30,41 @@ public class Controller implements Initializable {
 
     }
 
+    private Parser parser = new BasicParser();
     @FXML
-    public void run() throws RockException {
+    public void run(){
         System.out.println("Code runs");
         lexer = new Lexer(new StringReader(tarCode.getText()));
         clearConsole();
-        Token token;
-        do {
-            token = lexer.read();
-            tarConsole.appendText("\n" +token.getLineNumber() + ": " + token.literal().replace("\n", "#EOL"));
-        } while (token != Token.EOF);
+        try {
+            ASTree ast = parser.parse(lexer);
+            if (ast == null) {
+                tarConsole.setText("#Failed\n");
+            } else {
+                tarConsole.setText("#Succeed\n");
+                tarConsole.appendText(ast.toString()+'\n');
+                outputParseResult(ast, 0);
+            }
+        } catch (RockException e) {
+            e.printStackTrace();
+            tarConsole.appendText("\n" + e.getMessage());
+        }
+    }
+
+    private void outputParseResult(ASTree ast, int indent) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 1; i < indent; i++) {
+            sb.append("| ");
+        }
+        sb.append("|-");
+        if (ast.isLeaf()) {
+            sb.append(ast.toString()).append('\n');
+            tarConsole.appendText(sb.toString());
+            return;
+        }
+        for (int i = 0; i < ast.childCount(); i++) {
+            outputParseResult(ast.child(i), indent + 1);
+        }
     }
 
     @FXML
@@ -51,6 +80,16 @@ public class Controller implements Initializable {
     @FXML
     public void clearConsole() {
         tarConsole.setText("");
+    }
+
+    @FXML
+    public void onKey(KeyEvent event) {
+        if (event.isControlDown()) {
+            switch (event.getCode()) {
+                case SPACE: run(); break;
+                case C: stop(); break;
+            }
+        }
     }
 
 }

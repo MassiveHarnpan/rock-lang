@@ -1,4 +1,4 @@
-package rock;
+package rock.token;
 
 public class IdToken extends Token {
     private String text;
@@ -19,7 +19,12 @@ public class IdToken extends Token {
     }
 
     @Override
-    public String getText() {
+    public String getStr() {
+        return text;
+    }
+
+    @Override
+    public Object value() {
         return text;
     }
 }

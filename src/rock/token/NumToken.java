@@ -1,4 +1,4 @@
-package rock;
+package rock.token;
 
 public class NumToken extends Token {
 
@@ -15,7 +15,12 @@ public class NumToken extends Token {
     }
 
     @Override
-    public int getNumber() {
-        return number.intValue();
+    public Number getNum() {
+        return number;
+    }
+
+    @Override
+    public Object value() {
+        return number;
     }
 }
