@@ -6,6 +6,7 @@ import rock.ast.ASTree;
 import rock.Lexer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ForkParser extends NonTerminalParser {
@@ -14,6 +15,11 @@ public class ForkParser extends NonTerminalParser {
 
     public ForkParser(Class<ASTList> as) {
         super(as);
+    }
+
+    public ForkParser(Class<ASTList> as, Parser... parsers) {
+        super(as);
+        rules.addAll(Arrays.asList(parsers));
     }
 
     @Override

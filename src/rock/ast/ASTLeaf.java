@@ -26,6 +26,6 @@ public class ASTLeaf extends ASTree {
 
     @Override
     public String toString() {
-        return token.literal();
+        return token.literal().replace("\n", "#EOL");
     }
 }

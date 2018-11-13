@@ -6,10 +6,7 @@ import rock.ast.ASTLeaf;
 import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.Lexer;
-import rock.token.IdToken;
-import rock.token.NumToken;
-import rock.token.StrToken;
-import rock.token.Token;
+import rock.token.*;
 
 public abstract class Parser {
 
@@ -38,6 +35,8 @@ public abstract class Parser {
     //public abstract boolean match(Lexer lexer) throws RockException;
 
 
+
+
     public static ForkParser fork(Class<ASTList> as) {
         return new ForkParser(as);
     }
@@ -46,13 +45,49 @@ public abstract class Parser {
         return new ForkParser(ASTList.class);
     }
 
+    public static ForkParser fork(Parser... parsers) {
+        return new ForkParser(ASTList.class, parsers);
+    }
+
+
+
+
+
+
+    public static RepeatParser repeat(Class<ASTList> as, Parser element, Parser operator, boolean needSeparator) {
+        return new RepeatParser(as, element, operator, needSeparator);
+    }
+
     public static RepeatParser repeat(Class<ASTList> as, Parser element, Parser operator) {
         return new RepeatParser(as, element, operator);
     }
 
+    public static RepeatParser repeat(Parser element, Parser operator) {
+        return new RepeatParser(ASTList.class, element, operator);
+    }
+
+    public static RepeatParser repeat(Parser element, Parser operator,boolean needSeparator) {
+        return new RepeatParser(ASTList.class, element, operator, needSeparator);
+    }
+
+
+
+
+
+
     public static SeqParser seq(Class<ASTList> as) {
         return new SeqParser(as);
     }
+
+    public static SeqParser seq(Parser... parsers) {
+        return new SeqParser(ASTList.class, parsers);
+    }
+
+
+
+
+
+
 
     public static BinaryParser binary(Class<ASTList> as, Parser left, Parser operator, Parser right) {
         return new BinaryParser(as, left, operator, right);
@@ -62,8 +97,39 @@ public abstract class Parser {
         return new BinaryParser(as, element, operator, element);
     }
 
-    public static TerminalParser terminal(Class<ASTLeaf> as, Class<? extends Token> clazz, Object value) {
-        return new TerminalParser(as, clazz, value);
+    public static BinaryParser binary(Parser element, Parser operator) {
+        return new BinaryParser(ASTList.class, element, operator, element);
+    }
+
+    public static BinaryParser binary(Parser left, Parser operator, Parser right) {
+        return new BinaryParser(ASTList.class, left, operator, right);
+    }
+
+
+
+
+
+
+
+
+    public static TerminalParser terminal(Class<ASTLeaf> as, Class<? extends Token> clazz, Object... values) {
+        return new TerminalParser(as, clazz, values);
+    }
+
+    public static TerminalParser id(Object... values) {
+        return new TerminalParser(ASTLeaf.class, IdToken.class, values);
+    }
+
+    public static TerminalParser num() {
+        return new TerminalParser(ASTLeaf.class, NumToken.class);
+    }
+
+    public static TerminalParser str() {
+        return new TerminalParser(ASTLeaf.class, StrToken.class);
+    }
+
+    public static TerminalParser name() {
+        return new TerminalParser(ASTLeaf.class, NameToken.class);
     }
 
 

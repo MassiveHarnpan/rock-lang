@@ -42,7 +42,7 @@ public class Controller implements Initializable {
                 tarConsole.setText("#Failed\n");
             } else {
                 tarConsole.setText("#Succeed\n");
-                tarConsole.appendText(ast.toString()+'\n');
+                tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
                 outputParseResult(ast, 0);
             }
         } catch (RockException e) {
@@ -58,7 +58,7 @@ public class Controller implements Initializable {
         }
         sb.append("|-");
         if (ast.isLeaf()) {
-            sb.append(ast.toString()).append('\n');
+            sb.append(ast.toString().replace("\n", "#EOL")).append('\n');
             tarConsole.appendText(sb.toString());
             return;
         }

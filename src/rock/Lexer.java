@@ -1,9 +1,6 @@
 package rock;
 
-import rock.token.IdToken;
-import rock.token.NumToken;
-import rock.token.StrToken;
-import rock.token.Token;
+import rock.token.*;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -14,7 +11,8 @@ import java.util.regex.Pattern;
 
 public class Lexer {
 
-    public static final String regexPat = "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|[A-Z_a-z][A-Z_a-z0-9]*|!=|==|<=|>=|&&|\\|\\||\\p{Punct})?";
+    public static final String regexPat =
+            "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|(while|for|if|else|!=|==|<=|>=|&&|\\|\\||\\p{Punct})|[A-Z_a-z][A-Z_a-z0-9]*)?";
     private Pattern pattern = Pattern.compile(regexPat);
     private ArrayList<Token> queue = new ArrayList<>();
     private int pointer = 0;
@@ -94,8 +92,10 @@ public class Lexer {
             token = new NumToken(lineNumber, m, Integer.valueOf(m));
         } else if (matcher.group(4) != null) {
             token = new StrToken(lineNumber, m, toStringLiteral(m));
-        } else {
+        } else if (matcher.group(6) != null) {
             token = new IdToken(lineNumber, m, m);
+        } else {
+            token = new NameToken(lineNumber, m);
         }
         queue.add(token);
     }

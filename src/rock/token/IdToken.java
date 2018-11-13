@@ -4,12 +4,12 @@ public class IdToken extends Token {
     private String text;
 
     public IdToken(int lineNumber, String literal, String text) {
-        super(lineNumber, literal);
+        super(lineNumber, TokenType.IDENTIFIER, literal);
         this.text = text;
     }
 
     public IdToken(int lineNumber, String text) {
-        super(lineNumber, text);
+        super(lineNumber, TokenType.IDENTIFIER, text);
         this.text = text;
     }
 

@@ -8,7 +8,10 @@ import rock.Lexer;
 import rock.token.Token;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static rock.token.Token.EOL;
 
@@ -16,12 +19,12 @@ public class TerminalParser extends Parser {
 
     private Class<ASTLeaf> as;
     private Class<? extends Token> clazz;
-    private Object value;
+    private Set values = new HashSet();
 
-    public TerminalParser(Class<ASTLeaf> as, Class<? extends Token> clazz, Object value) {
+    public TerminalParser(Class<ASTLeaf> as, Class<? extends Token> clazz, Object... values) {
         this.as = as;
         this.clazz = clazz;
-        this.value = value;
+        this.values.addAll(Arrays.asList(values));
     }
 
     @Override
@@ -32,10 +35,10 @@ public class TerminalParser extends Parser {
         if (!clazz.isInstance(token)) {
             return null;
         }
-        if (value == null) {
+        if (values.isEmpty()) {
             return create(token);
         }
-        if (Objects.equals(value, token.value())) {
+        if (values.contains(token.value())) {
             return create(token);
         }
         return null;

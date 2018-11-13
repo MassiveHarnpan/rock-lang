@@ -21,6 +21,9 @@ public class RepeatParser extends NonTerminalParser {
             if (sep == null) {
                 break;
             }
+            if (needSeparator) {
+                ast.append(sep);
+            }
             elem = element.parse(lexer);
             if (elem == null) {
                 lexer.recovery(check);
@@ -38,10 +41,19 @@ public class RepeatParser extends NonTerminalParser {
 
     private Parser element;
     private Parser separator;
+    private boolean needSeparator;
+
+    public RepeatParser(Class<ASTList> as, Parser element, Parser separator, boolean needSeparator) {
+        super(as);
+        this.element = element;
+        this.separator = separator;
+        this.needSeparator = needSeparator;
+    }
 
     public RepeatParser(Class<ASTList> as, Parser element, Parser separator) {
         super(as);
         this.element = element;
         this.separator = separator;
+        this.needSeparator = true;
     }
 }
