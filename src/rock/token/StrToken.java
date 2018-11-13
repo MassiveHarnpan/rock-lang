@@ -5,7 +5,7 @@ public class StrToken extends Token {
     private String str;
 
     public StrToken(int lineNumber, String literal, String str) {
-        super(lineNumber, literal);
+        super(lineNumber, TokenType.STRING, literal);
         this.str = str;
     }
 

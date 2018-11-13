@@ -1,4 +1,5 @@
 package rock.parser;
 
-public class BasicParser {
+public class BasicParser extends Parser {
+
 }
