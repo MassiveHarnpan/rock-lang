@@ -7,17 +7,20 @@ import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.token.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BinaryParser extends NonTerminalParser {
     @Override
-    public ASTree doParse(Lexer lexer) throws RockException {
-        ASTree left, operator, right;
-        if ((left = this.left.parse(lexer)) == null
-            || (operator = this.operator.parse(lexer)) == null
-            || (right = this.right.parse(lexer)) == null) {
-            return null;
+    public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
+        List<ASTree> list = new ArrayList<>();
+        if (left.parse(lexer, list)
+            && operator.parse(lexer, list)
+            && right.parse(lexer, list)) {
+            res.addAll(list);
+            return true;
         }
-        ASTList ast = create(left, operator, right);
-        return ast;
+        return false;
     }
 //
 //    @Override

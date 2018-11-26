@@ -21,7 +21,7 @@ public class RockException extends Exception {
     }
 
 
-    public RockException(IOException e) {
+    public RockException(Exception e) {
         super(e);
     }
 }

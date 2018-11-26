@@ -56,7 +56,7 @@ public class Controller implements Initializable {
         for (int i = 1; i < indent; i++) {
             sb.append("| ");
         }
-        sb.append("|-");
+        sb.append("|-  ");
         if (ast.isLeaf()) {
             sb.append(ast.toString().replace("\n", "#EOL")).append('\n');
             tarConsole.appendText(sb.toString());

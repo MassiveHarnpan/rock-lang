@@ -2,17 +2,17 @@ package rock.parser;
 
 
 import rock.RockException;
-import rock.ast.ASTLeaf;
-import rock.ast.ASTList;
-import rock.ast.ASTree;
+import rock.ast.*;
 import rock.Lexer;
 import rock.token.*;
+
+import java.util.List;
 
 public abstract class Parser {
 
     private static int i = 0;
 
-    public ASTree parse(Lexer lexer) throws RockException {
+    public boolean parse(Lexer lexer, List<ASTree> res) throws RockException {
         i ++ ;
         StringBuffer ind = new StringBuffer();
         for (int j = 0; j < i; j++) {
@@ -21,17 +21,18 @@ public abstract class Parser {
         String indent = ind.toString();
         System.out.println(indent+"Parsing "+getClass().getSimpleName());
         int check = lexer.pointer();
-        ASTree ast = doParse(lexer);
-        if (ast == null) {
+        boolean result = doParse(lexer, res);
+        if (!result) {
             System.out.println(indent+"parse failed");
             lexer.recovery(check);
         } else {
-            System.out.println(indent+"parse succeeded: "+ast);
+            System.out.println(indent+"parse succeeded: " + res);
         }
         i--;
-        return ast;
+        return result;
     }
-    protected abstract ASTree doParse(Lexer lexer) throws RockException;
+    protected abstract boolean doParse(Lexer lexer, List<ASTree> res) throws RockException;
+    public abstract ASTree parse(Lexer lexer) throws RockException;
     //public abstract boolean match(Lexer lexer) throws RockException;
 
 
@@ -54,20 +55,12 @@ public abstract class Parser {
 
 
 
-    public static RepeatParser repeat(Class<ASTList> as, Parser element, Parser operator, boolean needSeparator) {
-        return new RepeatParser(as, element, operator, needSeparator);
+    public static RepeatParser repeat(Class<ASTList> as, Parser element) {
+        return new RepeatParser(as, element);
     }
 
-    public static RepeatParser repeat(Class<ASTList> as, Parser element, Parser operator) {
-        return new RepeatParser(as, element, operator);
-    }
-
-    public static RepeatParser repeat(Parser element, Parser operator) {
-        return new RepeatParser(ASTList.class, element, operator);
-    }
-
-    public static RepeatParser repeat(Parser element, Parser operator,boolean needSeparator) {
-        return new RepeatParser(ASTList.class, element, operator, needSeparator);
+    public static RepeatParser repeat(Parser element) {
+        return new RepeatParser(ASTList.class, element);
     }
 
 
@@ -75,7 +68,20 @@ public abstract class Parser {
 
 
 
-    public static SeqParser seq(Class<ASTList> as) {
+    public static ASTParser ast(Parser parser) {
+        return new ASTParser(ASTList.class, parser);
+    }
+
+
+
+
+
+
+
+
+
+
+    public static SeqParser seq(Class<? extends ASTList> as) {
         return new SeqParser(as);
     }
 
@@ -108,6 +114,28 @@ public abstract class Parser {
 
 
 
+    public static SeparateParser sep(Class<? extends Token> clazz, Object... values) {
+        return new SeparateParser(clazz, values);
+    }
+
+    public static SeparateParser sep(Object... values) {
+        return new SeparateParser(IdToken.class, values);
+    }
+
+
+
+
+    public static OptionParser option(Parser parser) {
+        return new OptionParser(ASTList.class, parser);
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -121,15 +149,15 @@ public abstract class Parser {
     }
 
     public static TerminalParser num() {
-        return new TerminalParser(ASTLeaf.class, NumToken.class);
+        return new TerminalParser(Primary.class, NumToken.class);
     }
 
     public static TerminalParser str() {
-        return new TerminalParser(ASTLeaf.class, StrToken.class);
+        return new TerminalParser(Primary.class, StrToken.class);
     }
 
     public static TerminalParser name() {
-        return new TerminalParser(ASTLeaf.class, NameToken.class);
+        return new TerminalParser(Name.class, NameToken.class);
     }
 
 

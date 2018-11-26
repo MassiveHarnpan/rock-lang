@@ -8,43 +8,52 @@ import rock.Lexer;
 import rock.token.Token;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static rock.token.Token.EOL;
 
 public class TerminalParser extends Parser {
 
-    private Class<ASTLeaf> as;
+    private Class<? extends ASTLeaf> as;
     private Class<? extends Token> clazz;
     private Set values = new HashSet();
 
-    public TerminalParser(Class<ASTLeaf> as, Class<? extends Token> clazz, Object... values) {
+    public TerminalParser(Class<? extends ASTLeaf> as, Class<? extends Token> clazz, Object... values) {
         this.as = as;
         this.clazz = clazz;
         this.values.addAll(Arrays.asList(values));
     }
 
     @Override
-    public ASTree doParse(Lexer lexer) throws RockException {
+    public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
         Token token = lexer.read();
-        //System.out.println("expect: "+clazz.getSimpleName()+" "+value);
-        //System.out.println("get: "+token.getClass().getSimpleName()+" "+token.literal().replace(EOL, "#EOL"));
+        System.out.println("except: "+clazz.getSimpleName()+" "+values);
+        System.out.println("find: "+ token.getClass().getSimpleName()+" "+token.literal());
+        if (!clazz.isInstance(token)) {
+            return false;
+        }
+        if (values.isEmpty() || values.contains(token.value())) {
+            res.add(create(token));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ASTree parse(Lexer lexer) throws RockException {
+        Token token = lexer.read();
+        System.out.println("except: "+values);
+        System.out.println("find: "+token.literal());
         if (!clazz.isInstance(token)) {
             return null;
         }
-        if (values.isEmpty()) {
-            return create(token);
-        }
-        if (values.contains(token.value())) {
+        if (values.isEmpty() || values.contains(token.value())) {
             return create(token);
         }
         return null;
     }
 
-//    @Override
+    //    @Override
 //    public boolean match(Lexer lexer) throws RockException {
 //        if (clazz.isInstance(lexer.peek(0))) {
 //            return true;
@@ -52,13 +61,14 @@ public class TerminalParser extends Parser {
 //        return false;
 //    }
 
-    public ASTLeaf create(Token token) throws RockException {
+    protected ASTLeaf create(Token token) throws RockException {
         try {
-            Constructor<ASTLeaf> constructor = as.getConstructor(Token.class);
+            Constructor<? extends ASTLeaf> constructor = as.getConstructor(Token.class);
             ASTLeaf asl = constructor.newInstance(token);
             return asl;
         } catch (Exception e) {
-            throw new RockException(e.getMessage());
+            e.printStackTrace();
+            throw new RockException(e);
         }
     }
 

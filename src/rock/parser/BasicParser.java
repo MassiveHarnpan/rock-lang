@@ -2,47 +2,69 @@ package rock.parser;
 
 import rock.Lexer;
 import rock.RockException;
-import rock.ast.ASTLeaf;
-import rock.ast.ASTList;
-import rock.ast.ASTree;
+import rock.ast.*;
 import rock.token.*;
 
-public class BasicParser extends Parser {
+import java.util.ArrayList;
+import java.util.List;
 
-    protected static Parser string = str();
-    protected static Parser number = num();
-    protected static Parser name = name();
-    protected static Parser fOperator = id("*", "/", "%");
-    protected static Parser tOperator = id("+", "-");
-    protected static Parser bOperator = id("==", "!=", ">", "<", ">=", "<=");
-    protected static Parser factor = fork(number, string, name);
-    protected static Parser term = repeat(factor, fOperator, true);
-    protected static Parser expr = fork().or(binary(ASTList.class, term, tOperator)).or(term);
-    protected static Parser numExpr = repeat(term, tOperator);
-    protected static Parser boolExpr = repeat(numExpr, bOperator);
-    protected static Parser condition = boolExpr;
-    protected static Parser expression = fork(numExpr, boolExpr);
-    protected static Parser assignment = binary(name, id("="), expression);
-    protected static Parser eol = id(Token.EOL);
-    protected static Parser body = repeat(fork(assignment, expression), eol);
-    protected static Parser whileStmt = seq(id("while"), condition, id("{"), eol)
-            .then(body).then(eol).then(id("}")).then(eol);
-    protected static Parser ifStmt = seq(id("if"), condition, id("{"), eol)
-            .then(body).then(eol).then(id("}")).then(id("else")).then(id("{")).then(eol).then(body).then(eol).then(id("}")).then(eol);
+public class BasicParser extends NonTerminalParser {
+
+    
+
+    public BasicParser() {
+        super(ASTList.class);
+        Parser string = str();
+        Parser number = num();
+        Parser name = name();
+
+        Parser fOperator = id("*", "/", "%");
+        Parser tOperator = id("+", "-");
+        Parser bOperator = id("==", "!=", ">", "<", ">=", "<=");
+
+        Parser factor = fork(number, string, name);
+        Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor))));
+        Parser expr = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term))));
+        Parser expression = ast(seq(Expr.class).then(expr, repeat(seq(bOperator, expr))));
+        Parser assignStmt = seq(AssignStmt.class).then(name).then(sep("=")).then(expression);
+        SeqParser stmt = seq(ASTList.class);
+        Parser eol = sep(Token.EOL);
+        Parser block = ast(seq(Block.class).then(sep("{"), eol, repeat(stmt), sep("}")));
+        Parser whileStmt = seq(WhileStmt.class).then(sep("while"),
+                expression,
+                block);
+        Parser ifStmt = seq(IfStmt.class).then(sep("if"),
+                expression,
+                block,
+                option(
+                        seq(sep("else"),
+                                block)
+                ));
 
 
-    protected static Parser statement = fork().or(whileStmt).or(ifStmt).or(assignment).or(expression);
+        stmt.then(option(fork(whileStmt, ifStmt, assignStmt, expression)), eol);
 
 
-    protected static Parser program = repeat(ASTList.class, statement, terminal(ASTLeaf.class, IdToken.class, Token.EOL));
+        program = repeat(ASTList.class, stmt);
+    }
+
+    private Parser program;
 
 //    static {
 //        ((ForkParser)factor).or(term);
 //    }
 
     @Override
-    public ASTree doParse(Lexer lexer) throws RockException {
-        return program.parse(lexer);
+    public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
+        return program.parse(lexer, res);
+    }
+
+    public ASTree parse(Lexer lexer) throws RockException {
+        List<ASTree> res = new ArrayList<>();
+        if (program.parse(lexer, res)) {
+            return create(res.toArray(new ASTree[res.size()]));
+        }
+        return null;
     }
 
 //    @Override

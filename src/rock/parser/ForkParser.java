@@ -23,14 +23,13 @@ public class ForkParser extends NonTerminalParser {
     }
 
     @Override
-    public ASTree doParse(Lexer lexer) throws RockException {
+    public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
         for (Parser rule : rules) {
-            ASTree ast =  rule.parse(lexer);
-            if (ast != null) {
-                return ast;
+            if (rule.parse(lexer, res)) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 //    @Override

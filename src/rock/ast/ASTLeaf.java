@@ -1,5 +1,6 @@
 package rock.ast;
 
+import rock.Enviroument;
 import rock.token.Token;
 
 public class ASTLeaf extends ASTree {
@@ -18,10 +19,19 @@ public class ASTLeaf extends ASTree {
         return 0;
     }
 
+    @Override
+    public Object eval(Enviroument env) {
+        return token.value();
+    }
+
     private Token token;
 
     public ASTLeaf(Token token) {
         this.token = token;
+    }
+
+    protected Token token() {
+        return token;
     }
 
     @Override

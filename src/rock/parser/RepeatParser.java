@@ -6,32 +6,21 @@ import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.token.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RepeatParser extends NonTerminalParser {
+
     @Override
-    public ASTree doParse(Lexer lexer) throws RockException {
-        ASTList ast = new ASTList();
-        ASTree elem = element.parse(lexer);
-        if (elem == null) {
-            return null;
-        }
-        ast.append(elem);
+    public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
         while (lexer.peek(0) != Token.EOF) {
             int check = lexer.pointer();
-            ASTree sep = separator.parse(lexer);
-            if (sep == null) {
-                break;
-            }
-            if (needSeparator) {
-                ast.append(sep);
-            }
-            elem = element.parse(lexer);
-            if (elem == null) {
+            if (!element.parse(lexer, res)) {
                 lexer.recovery(check);
                 break;
             }
-            ast.append(elem);
         }
-        return ast;
+        return true;
     }
 
 //    @Override
@@ -40,20 +29,10 @@ public class RepeatParser extends NonTerminalParser {
 //    }
 
     private Parser element;
-    private Parser separator;
-    private boolean needSeparator;
 
-    public RepeatParser(Class<ASTList> as, Parser element, Parser separator, boolean needSeparator) {
+    public RepeatParser(Class<? extends ASTList> as, Parser element) {
         super(as);
         this.element = element;
-        this.separator = separator;
-        this.needSeparator = needSeparator;
     }
 
-    public RepeatParser(Class<ASTList> as, Parser element, Parser separator) {
-        super(as);
-        this.element = element;
-        this.separator = separator;
-        this.needSeparator = true;
-    }
 }
