@@ -18,34 +18,34 @@ public class BasicParser extends NonTerminalParser {
         Parser number = num();
         Parser name = name();
 
-        Parser fOperator = id("*", "/", "%");
-        Parser tOperator = id("+", "-");
-        Parser bOperator = id("==", "!=", ">", "<", ">=", "<=");
+        Parser fOperator = id("*", "/", "%").named("fOperator");
+        Parser tOperator = id("+", "-").named("tOperator");
+        Parser bOperator = id("==", "!=", ">", "<", ">=", "<=").named("bOperator");
 
-        Parser factor = fork(number, string, name);
-        Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor))));
-        Parser expr = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term))));
-        Parser expression = ast(seq(Expr.class).then(expr, repeat(seq(bOperator, expr))));
-        Parser assignStmt = seq(AssignStmt.class).then(name).then(sep("=")).then(expression);
+        Parser factor = fork(number, string, name).named("factor");
+        Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
+        Parser expr = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term)))).named("expr");
+        Parser expression = ast(seq(Expr.class).then(expr, repeat(seq(bOperator, expr)))).named("expression");
+        Parser assignStmt = ast(seq(AssignStmt.class).then(name, sep("="), expression)).named("assignStmt");
         SeqParser stmt = seq(ASTList.class);
-        Parser eol = sep(Token.EOL);
-        Parser block = ast(seq(Block.class).then(sep("{"), eol, repeat(stmt), sep("}")));
-        Parser whileStmt = seq(WhileStmt.class).then(sep("while"),
+        Parser eol = sep(Token.EOL).named("eol");
+        Parser block = ast(seq(Block.class).then(sep("{"), eol, repeat(stmt), sep("}"))).named("block");
+        Parser whileStmt = ast(seq(WhileStmt.class).then(sep("while"),
                 expression,
-                block);
-        Parser ifStmt = seq(IfStmt.class).then(sep("if"),
+                block)).named("whileStmt");
+        Parser ifStmt = ast(seq(IfStmt.class).then(sep("if"),
                 expression,
                 block,
-                option(
-                        seq(sep("else"),
-                                block)
-                ));
+                option(seq(sep("else"),
+                        block)
+                ))).named("ifStmt");
 
 
-        stmt.then(option(fork(whileStmt, ifStmt, assignStmt, expression)), eol);
+        stmt.then(option(fork(whileStmt, ifStmt, assignStmt, expression)), eol).named("stmt");
+        Parser statement = ast(stmt).named("statement");
 
 
-        program = repeat(ASTList.class, stmt);
+        program = repeat(ASTList.class, statement);
     }
 
     private Parser program;

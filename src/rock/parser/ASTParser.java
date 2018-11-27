@@ -19,11 +19,11 @@ public class ASTParser extends NonTerminalParser {
 
     @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
-        List<ASTree> list = new ArrayList<>();
-        if (!parser.parse(lexer, list)) {
+        ASTree ast = parser.parse(lexer);
+        if (ast == null) {
             return false;
         }
-        res.add(create(list.toArray(new ASTree[list.size()])));
+        res.add(ast);
         return true;
     }
 }

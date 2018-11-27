@@ -11,8 +11,8 @@ public class AssignStmt extends ASTList {
 
     }
 
-    public Name name() {
-        return ((Name) child(0));
+    public String name() {
+        return ((Name) child(0)).token().literal();
     }
 
     public ASTree value() {
@@ -21,8 +21,9 @@ public class AssignStmt extends ASTList {
 
     @Override
     public Object eval(Enviroument env) {
-        String name = name().token().literal();
+        String name = name();
         Object val = value().eval(env);
+        System.out.println(name + " << " + val);
         env.put(name, val);
         return val;
     }

@@ -26,14 +26,9 @@ public class TerminalParser extends Parser {
 
     @Override
     public boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
-        Token token = lexer.read();
-        System.out.println("except: "+clazz.getSimpleName()+" "+values);
-        System.out.println("find: "+ token.getClass().getSimpleName()+" "+token.literal());
-        if (!clazz.isInstance(token)) {
-            return false;
-        }
-        if (values.isEmpty() || values.contains(token.value())) {
-            res.add(create(token));
+        ASTree ast = parse(lexer);
+        if (ast != null) {
+            res.add(ast);
             return true;
         }
         return false;
@@ -42,7 +37,7 @@ public class TerminalParser extends Parser {
     @Override
     public ASTree parse(Lexer lexer) throws RockException {
         Token token = lexer.read();
-        System.out.println("except: "+values);
+        System.out.println("expect: " + clazz.getName() + values);
         System.out.println("find: "+token.literal());
         if (!clazz.isInstance(token)) {
             return null;

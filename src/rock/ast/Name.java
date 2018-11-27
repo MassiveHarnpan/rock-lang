@@ -11,6 +11,6 @@ public class Name extends ASTLeaf {
 
     @Override
     public Object eval(Enviroument env) {
-        return env.get(token().value().toString());
+        return env.get(token().literal());
     }
 }

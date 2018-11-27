@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import rock.Enviroument;
 import rock.Lexer;
 import rock.RockException;
 import rock.ast.ASTree;
@@ -45,6 +46,8 @@ public class Controller implements Initializable {
                 tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
                 outputParseResult(ast, 0);
             }
+            tarConsole.appendText("\n\n=> ");
+            tarConsole.appendText(String.valueOf(ast.eval(new Enviroument())));
         } catch (RockException e) {
             e.printStackTrace();
             tarConsole.appendText("\n" + e.getMessage());

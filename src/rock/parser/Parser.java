@@ -19,20 +19,37 @@ public abstract class Parser {
             ind.append(" |");
         }
         String indent = ind.toString();
-        System.out.println(indent+"Parsing "+getClass().getSimpleName());
+        String name = getName();
+        System.out.println(indent+"Parsing " + name);
+
         int check = lexer.pointer();
+        int back = res.size();
         boolean result = doParse(lexer, res);
         if (!result) {
-            System.out.println(indent+"parse failed");
+            System.out.println(indent+"parse "+name+" failed");
             lexer.recovery(check);
+            while (res.size() > back) {
+                res.remove(back);
+            }
         } else {
-            System.out.println(indent+"parse succeeded: " + res);
+            System.out.println(indent+"parse "+name+" succeeded: " + res);
         }
         i--;
         return result;
     }
     protected abstract boolean doParse(Lexer lexer, List<ASTree> res) throws RockException;
     public abstract ASTree parse(Lexer lexer) throws RockException;
+
+    protected String name;
+
+    public Parser named(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getName() {
+        return this.name == null ? getClass().getSimpleName() : this.name;
+    }
     //public abstract boolean match(Lexer lexer) throws RockException;
 
 

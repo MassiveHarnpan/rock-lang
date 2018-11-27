@@ -23,8 +23,12 @@ public class IfStmt extends ASTList {
 
     @Override
     public Object eval(Enviroument env) {
-        if (!Integer.valueOf(0).equals(condition().eval(env))) {
-            return thenBlock();
+        Object FALSE = Integer.valueOf(0);
+        Object condResult = condition().eval(env);
+        boolean match = !FALSE.equals(condResult);
+        System.out.println(match);
+        if (match) {
+            return thenBlock().eval(env);
         } else {
             ASTree elseBlock = elseBlock();
             return elseBlock == null ? null : elseBlock.eval(env);
