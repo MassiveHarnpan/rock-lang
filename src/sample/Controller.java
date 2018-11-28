@@ -3,14 +3,15 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import rock.Enviroument;
+import rock.Environment;
+import rock.Function;
 import rock.Lexer;
 import rock.RockException;
 import rock.ast.ASTree;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
+import rock.runtime.FuncPrint;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -28,10 +29,18 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        Function print = new FuncPrint();
+        runtime.put(print.name(), print);
     }
 
     private Parser parser = new BasicParser();
+    private Environment runtime = new Environment() {
+        @Override
+        public Environment output(String msg) {
+            tarConsole.appendText("\n" + msg);
+            return this;
+        }
+    };
     @FXML
     public void run(){
         System.out.println("Code runs");
@@ -39,15 +48,17 @@ public class Controller implements Initializable {
         clearConsole();
         try {
             ASTree ast = parser.parse(lexer);
+            if (ast != null) ast = ast.simplify();
             if (ast == null) {
                 tarConsole.setText("#Failed\n");
             } else {
                 tarConsole.setText("#Succeed\n");
-                tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
-                outputParseResult(ast, 0);
+                //tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
+                //outputParseResult(ast, 0);
             }
-            tarConsole.appendText("\n\n=> ");
-            tarConsole.appendText(String.valueOf(ast.eval(new Enviroument())));
+            tarConsole.appendText("\n------------------------\n");
+            String rst = String.valueOf(ast.eval(runtime.lower()));
+            tarConsole.appendText("\n=> " + rst);
         } catch (RockException e) {
             e.printStackTrace();
             tarConsole.appendText("\n" + e.getMessage());

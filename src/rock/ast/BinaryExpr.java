@@ -1,7 +1,7 @@
 package rock.ast;
 
-import rock.Enviroument;
-import rock.token.NumToken;
+import rock.Environment;
+import rock.RockException;
 
 public class BinaryExpr extends ASTList {
 
@@ -22,7 +22,7 @@ public class BinaryExpr extends ASTList {
     }
 
     @Override
-    public Object eval(Enviroument env) {
+    public Object eval(Environment env) throws RockException {
         Object leftVal = left().eval(env);
         Object rightVal = right().eval(env);
         return operate(leftVal, operator(), rightVal);

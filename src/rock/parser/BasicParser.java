@@ -13,7 +13,7 @@ public class BasicParser extends NonTerminalParser {
     
 
     public BasicParser() {
-        super(ASTList.class);
+        super(Block.class);
         Parser string = str();
         Parser number = num();
         Parser name = name();
@@ -36,16 +36,34 @@ public class BasicParser extends NonTerminalParser {
         Parser ifStmt = ast(seq(IfStmt.class).then(sep("if"),
                 expression,
                 block,
-                option(seq(sep("else"),
+                maybe(seq(sep("else"),
                         block)
                 ))).named("ifStmt");
 
+        Parser params = ast(seq(sep("("), option(seq(
+                name,
+                repeat(seq(sep(","), name))
+        )), sep(")"))).named("params");
 
-        stmt.then(option(fork(whileStmt, ifStmt, assignStmt, expression)), eol).named("stmt");
+        Parser args = ast(seq(sep("("), option(seq(
+                expression,
+                repeat(seq(sep(","), expression))
+        )), sep(")"))).named("args");
+
+        Parser funcDef = ast(seq(FuncDef.class).then(sep("def"), name, params, block)).named("funcDef");
+        Parser funcCall = ast(seq(FuncCall.class).then(name, args)).named("funcCall");
+
+
+
+        stmt.then(maybe(fork(whileStmt, ifStmt, funcCall, assignStmt, expression, funcDef)), eol).named("stmt");
         Parser statement = ast(stmt).named("statement");
 
 
-        program = repeat(ASTList.class, statement);
+
+
+
+
+        program = repeat(Block.class, statement);
     }
 
     private Parser program;

@@ -5,6 +5,7 @@ import rock.RockException;
 import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.ast.Expr;
+import rock.util.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -22,14 +23,14 @@ public abstract class NonTerminalParser extends Parser {
     }
 
     protected ASTList create(ASTree... children) throws RockException {
-        System.out.println(getName() + " is creating " + as.getName());
+        //Logger.log(getName() + " is creating " + as.getName());
         try {
             Constructor<? extends ASTList> constructor = as.getConstructor(ASTree[].class);
             if (constructor != null) {
-                //System.out.println("get constructor");
+                //Logger.log("get constructor");
                 ASTList asl = constructor.newInstance((Object) children);
-                //System.out.println(getName() + " created " + asl.getClass().getSimpleName());
-                //System.out.println(asl + " is instance of Expr = " + (asl instanceof Expr));
+                //Logger.log(getName() + " created " + asl.getClass().getSimpleName());
+                //Logger.log(asl + " is instance of Expr = " + (asl instanceof Expr));
                 return asl;
             }
             constructor = as.getConstructor();

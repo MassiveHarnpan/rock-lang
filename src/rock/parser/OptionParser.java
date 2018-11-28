@@ -10,16 +10,20 @@ import java.util.List;
 public class OptionParser extends NonTerminalParser {
 
     private Parser parser;
+    private boolean createAST;
 
 
-    public OptionParser(Class<? extends ASTList> as, Parser parser) {
+    public OptionParser(Class<? extends ASTList> as, Parser parser, boolean createAST) {
         super(as);
         this.parser = parser;
+        this.createAST = createAST;
     }
 
     @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
-        parser.parse(lexer, res);
+        if (!parser.parse(lexer, res) && createAST) {
+            res.add(create());
+        }
         return true;
     }
 }

@@ -1,6 +1,8 @@
 package rock.ast;
 
-import rock.Enviroument;
+import rock.Environment;
+import rock.RockException;
+import rock.util.Logger;
 
 public class AssignStmt extends ASTList {
 
@@ -8,7 +10,6 @@ public class AssignStmt extends ASTList {
 
     public AssignStmt(ASTree... children) {
         super(children);
-
     }
 
     public String name() {
@@ -20,10 +21,10 @@ public class AssignStmt extends ASTList {
     }
 
     @Override
-    public Object eval(Enviroument env) {
+    public Object eval(Environment env) throws RockException {
         String name = name();
         Object val = value().eval(env);
-        System.out.println(name + " << " + val);
+        //Logger.log(name + " << " + val);
         env.put(name, val);
         return val;
     }

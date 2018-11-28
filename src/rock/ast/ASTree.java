@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Enviroument;
+import rock.Environment;
+import rock.RockException;
 
 public abstract class ASTree {
 
@@ -9,7 +10,11 @@ public abstract class ASTree {
     public abstract ASTree child(int i);
     public abstract int childCount();
 
-    public abstract Object eval(Enviroument env);
+    public abstract Object eval(Environment env) throws RockException;
+
+    public ASTree simplify() {
+        return this;
+    }
 
     @Override
     public String toString() {

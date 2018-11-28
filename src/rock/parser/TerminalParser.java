@@ -6,6 +6,7 @@ import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.Lexer;
 import rock.token.Token;
+import rock.util.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -37,8 +38,8 @@ public class TerminalParser extends Parser {
     @Override
     public ASTree parse(Lexer lexer) throws RockException {
         Token token = lexer.read();
-        System.out.println("expect: " + clazz.getName() + values);
-        System.out.println("find: "+token.literal());
+        //Logger.log("expect: " + clazz.getName() + " " + values.toString().replace("\n", "#EOL"));
+        //Logger.log("find: " + token.getClass().getName() + " " + token.literal().replace("\n", "#EOL"));
         if (!clazz.isInstance(token)) {
             return null;
         }

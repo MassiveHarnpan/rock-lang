@@ -5,6 +5,7 @@ import rock.RockException;
 import rock.ast.*;
 import rock.Lexer;
 import rock.token.*;
+import rock.util.Logger;
 
 import java.util.List;
 
@@ -20,19 +21,19 @@ public abstract class Parser {
         }
         String indent = ind.toString();
         String name = getName();
-        System.out.println(indent+"Parsing " + name);
+        //Logger.log(indent+"Parsing " + name);
 
         int check = lexer.pointer();
         int back = res.size();
         boolean result = doParse(lexer, res);
         if (!result) {
-            System.out.println(indent+"parse "+name+" failed");
+            //Logger.log(indent+"parse "+name+" failed");
             lexer.recovery(check);
             while (res.size() > back) {
                 res.remove(back);
             }
         } else {
-            System.out.println(indent+"parse "+name+" succeeded: " + res);
+            //Logger.log(indent+"parse "+name+" succeeded: " + res);
         }
         i--;
         return result;
@@ -72,7 +73,7 @@ public abstract class Parser {
 
 
 
-    public static RepeatParser repeat(Class<ASTList> as, Parser element) {
+    public static RepeatParser repeat(Class<? extends ASTList> as, Parser element) {
         return new RepeatParser(as, element);
     }
 
@@ -142,8 +143,12 @@ public abstract class Parser {
 
 
 
+    public static OptionParser maybe(Parser parser) {
+        return new OptionParser(ASTList.class, parser, false);
+    }
+
     public static OptionParser option(Parser parser) {
-        return new OptionParser(ASTList.class, parser);
+        return new OptionParser(ASTList.class, parser, true);
     }
 
 
