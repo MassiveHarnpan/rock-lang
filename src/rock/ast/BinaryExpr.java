@@ -2,6 +2,7 @@ package rock.ast;
 
 import rock.Environment;
 import rock.RockException;
+import rock.util.Logger;
 
 public class BinaryExpr extends ASTList {
 
@@ -29,6 +30,8 @@ public class BinaryExpr extends ASTList {
     }
 
     public static Object operate(Object leftVal, String operator, Object rightVal) {
+        Logger.log("# left = " + leftVal);
+        Logger.log("# right = " + rightVal);
         switch (operator) {
             case "+": return ((Number) leftVal).intValue() + ((Number) rightVal).intValue();
             case "-": return ((Number) leftVal).intValue() - ((Number) rightVal).intValue();

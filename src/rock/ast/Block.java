@@ -9,6 +9,7 @@ public class Block extends ASTList {
 
     public Block(ASTree... children) {
         super(children);
+        liftSingleElement(true);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class Block extends ASTList {
                 itr.remove();
             }
         }
-        if (childCount() == 1) {
+        if (asl.childCount() == 1) {
             return asl.child(0);
         }
         return asl;

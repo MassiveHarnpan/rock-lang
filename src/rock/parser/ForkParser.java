@@ -44,8 +44,8 @@ public class ForkParser extends NonTerminalParser {
 
 
 
-    public ForkParser or(Parser rule) {
-        rules.add(rule);
+    public ForkParser or(Parser... rules) {
+        this.rules.addAll(Arrays.asList(rules));
         return this;
     }
 

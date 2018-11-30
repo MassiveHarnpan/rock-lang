@@ -14,8 +14,8 @@ public class FuncCall extends ASTList {
     }
 
 
-    public String funcName() {
-        return ((ASTLeaf) child(0)).token().literal();
+    public ASTree func() {
+        return child(0);
     }
 
     public List<ASTree> args() {
@@ -32,12 +32,12 @@ public class FuncCall extends ASTList {
 
     @Override
     public Object eval(Environment env) throws RockException {
-        Function func = (Function) env.get(funcName());
+        Function func = (Function) func().eval(env);
         List<ASTree> list = args();
         Object[] args = new Object[list.size()];
         for (int i = 0; i < list.size(); i++) {
             args[i] = list.get(i).eval(env);
         }
-        return func.eval(env, args);
+        return func.invoke(env, args);
     }
 }

@@ -21,19 +21,19 @@ public abstract class Parser {
         }
         String indent = ind.toString();
         String name = getName();
-        //Logger.log(indent+"Parsing " + name);
+        Logger.log(indent+"Parsing " + name);
 
         int check = lexer.pointer();
         int back = res.size();
         boolean result = doParse(lexer, res);
         if (!result) {
-            //Logger.log(indent+"parse "+name+" failed");
+            Logger.log(indent+"parse "+name+" failed");
             lexer.recovery(check);
             while (res.size() > back) {
                 res.remove(back);
             }
         } else {
-            //Logger.log(indent+"parse "+name+" succeeded: " + res);
+            Logger.log(indent+"parse "+name+" succeeded: " + res);
         }
         i--;
         return result;
@@ -88,6 +88,10 @@ public abstract class Parser {
 
     public static ASTParser ast(Parser parser) {
         return new ASTParser(ASTList.class, parser);
+    }
+
+    public static ASTParser ast() {
+        return new ASTParser(ASTList.class);
     }
 
 

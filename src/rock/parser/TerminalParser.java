@@ -38,8 +38,8 @@ public class TerminalParser extends Parser {
     @Override
     public ASTree parse(Lexer lexer) throws RockException {
         Token token = lexer.read();
-        //Logger.log("expect: " + clazz.getName() + " " + values.toString().replace("\n", "#EOL"));
-        //Logger.log("find: " + token.getClass().getName() + " " + token.literal().replace("\n", "#EOL"));
+        Logger.log("expect: " + clazz.getName() + " " + values.toString().replace("\n", "#EOL"));
+        Logger.log("find: " + token.getClass().getName() + " " + token.literal().replace("\n", "#EOL"));
         if (!clazz.isInstance(token)) {
             return null;
         }

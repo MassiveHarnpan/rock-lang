@@ -15,7 +15,7 @@ public class Expr extends ASTList {
     public Object eval(Environment env) throws RockException {
         Object leftVal = child(0).eval(env);
         if (childCount() == 1) {
-            //Logger.log(leftVal + " = " + leftVal);
+            Logger.log(leftVal + " = " + leftVal);
             return leftVal;
         }
         int index = 1;
@@ -23,9 +23,9 @@ public class Expr extends ASTList {
         while (index < childCount() - 1) {
             String operator = ((ASTLeaf) child(index++)).token().literal();
             Object rightVal = child(index++).eval(env);
-            //msg = leftVal + " " + operator + " " + rightVal + " = ";
+            msg = leftVal + " " + operator + " " + rightVal + " = ";
             leftVal = BinaryExpr.operate(leftVal, operator, rightVal);
-            //Logger.log(msg + leftVal);
+            Logger.log(msg + leftVal);
         }
         return leftVal;
     }

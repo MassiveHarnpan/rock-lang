@@ -17,6 +17,15 @@ public class ASTParser extends NonTerminalParser {
         this.parser = parser;
     }
 
+    public ASTParser(Class<ASTList> as) {
+        super(as);
+    }
+
+    public ASTParser of(Parser parser) {
+        this.parser = parser;
+        return this;
+    }
+
     @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws RockException {
         ASTree ast = parser.parse(lexer);

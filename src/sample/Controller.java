@@ -48,13 +48,13 @@ public class Controller implements Initializable {
         clearConsole();
         try {
             ASTree ast = parser.parse(lexer);
-            if (ast != null) ast = ast.simplify();
             if (ast == null) {
                 tarConsole.setText("#Failed\n");
             } else {
+                ast = ast.simplify();
                 tarConsole.setText("#Succeed\n");
-                //tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
-                //outputParseResult(ast, 0);
+                tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
+                outputParseResult(ast, 0);
             }
             tarConsole.appendText("\n------------------------\n");
             String rst = String.valueOf(ast.eval(runtime.lower()));
