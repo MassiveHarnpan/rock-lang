@@ -11,7 +11,7 @@ import rock.RockException;
 import rock.ast.ASTree;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
-import rock.runtime.FuncPrint;
+import rock.runtime.NativeFunction;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -29,18 +29,33 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Function print = new FuncPrint();
-        runtime.put(print.name(), print);
+        try {
+            //Function println = new NativeFunction("println", System.out, System.out.getClass().getDeclaredMethod("println", Object.class));
+            //runtime.put(println.name(), println);
+            //Function print = new NativeFunction("print", System.out, System.out.getClass().getDeclaredMethod("print", Object.class));
+            //runtime.put(print.name(), print);
+            Function currentTimeMillis = new NativeFunction("currentTimeMillis", System.class.getDeclaredMethod("currentTimeMillis"));
+            runtime.put("currentTimeMillis", currentTimeMillis);
+
+            runtime.put("print", new Function("print", new String[] {"msg"}, env -> {
+                tarConsole.appendText(String.valueOf(env.get("msg")));
+                return null;
+            }));
+            runtime.put("println", new Function("print", new String[] {"msg"}, env -> {
+                tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
+                return null;
+            }));
+            runtime.put("ln", new Function("print", new String[] {}, env -> {
+                tarConsole.appendText("\n");
+                return null;
+            }));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     private Parser parser = new BasicParser();
-    private Environment runtime = new Environment() {
-        @Override
-        public Environment output(String msg) {
-            tarConsole.appendText("\n" + msg);
-            return this;
-        }
-    };
+    private Environment runtime = new Environment();
     @FXML
     public void run(){
         System.out.println("Code runs");
@@ -57,7 +72,7 @@ public class Controller implements Initializable {
                 outputParseResult(ast, 0);
             }
             tarConsole.appendText("\n------------------------\n");
-            String rst = String.valueOf(ast.eval(runtime.lower()));
+            String rst = String.valueOf(ast.eval(new Environment(runtime)));
             tarConsole.appendText("\n=> " + rst);
         } catch (RockException e) {
             e.printStackTrace();

@@ -25,16 +25,16 @@ public class BasicParser extends NonTerminalParser {
 
         ASTParser func = ast();
         ASTParser expr = ast();
-        Parser primary = fork(seq(sep("("), expr, sep(")")), func, number, name, string).named("primary");
+        ASTParser args = ast();
+        ASTParser stmt = ast();
+
+        Parser primary = fork(seq(sep("("), stmt, sep(")")), func, number, name, string).named("primary");
         Parser factor = fork(seq(Negtive.class).then(sep("-"), primary), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
         Parser comp = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term)))).named("comp");
         expr.of(seq(Expr.class).then(comp, repeat(seq(comparator, comp)))).named("expr");
+        Parser simple = ast(seq(FuncCall.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
 
-        ASTParser args = ast();
-        Parser simple = ast(seq(Simple.class).then(name, ast(repeat(expr))).named("simple"));
-
-        ASTParser stmt = ast();
 
         Parser assign = ast(seq(AssignStmt.class).then(name, sep("="), stmt)).named("assign");
 
@@ -57,7 +57,7 @@ public class BasicParser extends NonTerminalParser {
                 repeat(seq(sep(","), name))
         )), sep(")"))).named("params");
 
-        args.of(seq(sep("("), option(seq(
+        args.of(seq(sep("("), maybe(seq(
                 expr,
                 repeat(seq(sep(","), expr))
         )), sep(")"))).named("args");

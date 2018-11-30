@@ -155,6 +155,10 @@ public abstract class Parser {
         return new OptionParser(ASTList.class, parser, true);
     }
 
+    public static OptionParser option() {
+        return new OptionParser(ASTList.class, null, true);
+    }
+
 
 
 

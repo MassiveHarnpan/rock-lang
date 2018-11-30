@@ -1,16 +1,15 @@
 package rock.ast;
 
 import rock.Environment;
+import rock.Evaluator;
 import rock.RockException;
 
-public abstract class ASTree {
+public abstract class ASTree implements Evaluator {
 
 
     public abstract boolean isLeaf();
     public abstract ASTree child(int i);
     public abstract int childCount();
-
-    public abstract Object eval(Environment env) throws RockException;
 
     public ASTree simplify() {
         return this;

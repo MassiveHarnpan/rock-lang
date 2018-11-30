@@ -9,9 +9,9 @@ public class Function {
 
     private String name;
     private String[] params;
-    private ASTree body;
+    private Evaluator body;
 
-    public Function(String name, String[] params, ASTree body) {
+    public Function(String name, String[] params, Evaluator body) {
         this.name = name;
         this.params = params;
         this.body = body;
@@ -25,7 +25,7 @@ public class Function {
         return Arrays.copyOf(params, params.length);
     }
 
-    public ASTree body() {
+    public Evaluator body() {
         return body;
     }
 
@@ -36,11 +36,25 @@ public class Function {
 
     public Object invoke(Environment env, Object... args) throws RockException {
         Logger.log("receive args(" + args.length + "): " + Arrays.asList(args));
-        Environment lower = env.lower();
-        for (int i = 0; i < params.length; i++) {
-            lower.put(params[i], i >= args.length ? null : args[i]);
+        if (args.length != params.length) {
+            throw new RockException("wrong number of args: expect " + params.length + " get " + args.length);
         }
-        return body.eval(lower);
+        Environment newEnv = new Environment(env);
+        for (int i = 0; i < params.length; i++) {
+            newEnv.put(params[i], args[i]);
+        }
+        return body.eval(newEnv);
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(name).append("(");
+        for (int i = 0; i < params.length; i++) {
+            sb.append(params[i]);
+            if (i + 1 < params.length) {
+                sb.append(", ");
+            }
+        }
+        return sb.append(")").toString();
+    }
 }

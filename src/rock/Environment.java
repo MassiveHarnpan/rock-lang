@@ -8,55 +8,44 @@ import java.util.Map;
 
 public class Environment {
 
-    private Environment upper;
+    private Environment outer;
     private Map<String, Object> values = new HashMap<>();
 
-    public Environment(Environment upper) {
-        this.upper = upper;
+    public Environment(Environment outer) {
+        this.outer = outer;
     }
 
     public Environment() {
     }
 
+    protected Environment locate(String key) {
+        if (values.containsKey(key)) {
+            return this;
+        }
+        if (outer == null) {
+            return null;
+        }
+        return outer.locate(key);
+    }
+
     public Object put(String key, Object value) {
-        return values.put(key, value);
+        Environment env = locate(key);
+        if (env == null) {
+            env = this;
+        }
+        return env.values.put(key, value);
     }
 
     public Object get(String key) {
-        return values.get(key);
-    }
-
-    public Environment upper() {
-        return upper;
-    }
-
-    public Environment lower() {
-        Environment lower = new Environment();
-        lower.upper = this;
-        for (Map.Entry<String, Object> e : values.entrySet()) {
-            lower.put(e.getKey(), e.getValue());
-        }
-        return lower;
-    }
-
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-    public String input() {
-        try {
-            return reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Environment env = locate(key);
+        if (env == null) {
             return null;
         }
+        return env.values.get(key);
     }
 
-    public Environment output(String msg) {
-        if (upper != null && upper != this) {
-            upper.output(msg);
-        } else {
-            System.out.println(msg);
-        }
-        return this;
+    public Environment outer() {
+        return outer;
     }
 
 }

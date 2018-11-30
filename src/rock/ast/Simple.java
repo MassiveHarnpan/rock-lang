@@ -3,6 +3,9 @@ package rock.ast;
 import rock.Environment;
 import rock.Function;
 import rock.RockException;
+import rock.util.Logger;
+
+import java.util.Arrays;
 
 public class Simple extends ASTList {
 
@@ -28,6 +31,7 @@ public class Simple extends ASTList {
             for (int i = 0; i < argarr.length; i++) {
                 argarr[i] = args.child(i).eval(env);
             }
+            Logger.log("add args: " + Arrays.asList(argarr));
             return func.invoke(env, argarr);
         } else {
             return rst;

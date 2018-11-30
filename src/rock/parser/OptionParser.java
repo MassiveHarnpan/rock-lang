@@ -26,4 +26,10 @@ public class OptionParser extends NonTerminalParser {
         }
         return true;
     }
+
+    public OptionParser of(Parser parser) {
+        this.parser = parser;
+        return this;
+    }
+
 }
