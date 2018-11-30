@@ -73,7 +73,7 @@ public class BasicParser extends NonTerminalParser {
 
 
 
-        program = repeat(Block.class, seq(maybe(fork(simple, def, stmt)), sep(";", Token.EOL))).named("program");
+        program = repeat(Block.class, seq(maybe(fork(func, simple, def, stmt)), sep(";", Token.EOL))).named("program");
     }
 
     private Parser program;
