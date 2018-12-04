@@ -1,0 +1,142 @@
+i = 0
+a = 10
+while i != 3 {
+    i = i + 1
+    if i == 2 {
+        a = 2
+    }
+}
+a
+
+if a== 2 {
+    b = 2
+} else {
+    b = 3
+    c = 80
+}
+
+i = 18
+n = 3*7 +1
+i
+
+if i == 18 {
+    n
+} else {
+    100
+}
+
+def calc(a, b) {
+    a - b
+}
+
+
+calc(5, 2)
+
+def max(a, b) {
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+
+max(5, 7)
+
+i = 1
+sum = 0
+while i <= 100 {
+    sum = sum + i
+    i = i + 1
+}
+sum
+
+
+
+
+def factorial(num) {
+    rst = 1
+    while num > 0 {
+        rst = rst * num
+        num = num - 1
+    }
+    rst
+}
+factorial(5)
+
+print(23)
+
+
+
+def factorial(num) {
+    rst = 1
+    while num > 0 {
+        rst = rst * num
+        print(rst)
+        num = num - 1
+    }
+    rst
+}
+factorial(5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def factorial(num) {
+    rst = 1
+    while num > 0 {
+        rst = rst * num
+        num = num - 1
+    }
+    rst
+}
+factorial(5)
+
+def max(a, b) {
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+
+max 45 700
+
+
+
+
+
+def delay(time) {
+    start = currentTimeMillis()
+    end = start + time
+    while currentTimeMillis() < end {}
+}
+
+#print "start: "
+#print (start = currentTimeMillis())
+#ln
+
+
+delay(1000)
+
+#print "end: "
+#print (end = currentTimeMillis())
+#ln
+#print "time-cast: "
+#print end - start
+#ln
+

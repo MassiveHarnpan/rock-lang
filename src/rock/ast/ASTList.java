@@ -1,5 +1,8 @@
 package rock.ast;
 
+import rock.Environment;
+import rock.RockException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -7,7 +10,11 @@ import java.util.List;
 
 public class ASTList extends ASTree {
 
-    private List<ASTree> children = new ArrayList<>();
+    protected List<ASTree> children = new ArrayList<>();
+
+    protected Iterator<ASTree> iterator() {
+        return children.iterator();
+    }
 
     @Override
     public boolean isLeaf() {
@@ -23,6 +30,42 @@ public class ASTList extends ASTree {
     public int childCount() {
         return children.size();
     }
+
+    @Override
+    public Object eval(Environment env) throws RockException {
+        Object result = null;
+        for (ASTree ast : children) {
+            result = ast.eval(env);
+        }
+        return result;
+    }
+
+    @Override
+    public ASTree simplify() {
+        for (int i = 0; i < childCount(); i++) {
+            children.set(i, children.get(i).simplify());
+        }
+        if (lift && childCount() == 1) {
+            return child(0);
+        }
+        return this;
+    }
+
+    protected boolean lift = false;
+
+    protected boolean liftSingleElement() {
+        return lift;
+    }
+
+    protected boolean liftSingleElement(boolean lift) {
+        return this.lift = lift;
+    }
+
+
+
+
+
+
 
     public ASTList(ASTree... children) {
         this.children.addAll(Arrays.asList(children));

@@ -1,16 +1,16 @@
 package rock.token;
 
 public class IdToken extends Token {
-    private String name;
+    private String text;
 
-    public IdToken(int lineNumber, String literal, String name) {
-        super(lineNumber, TokenType.NAME, literal);
-        this.name = name;
+    public IdToken(int lineNumber, String literal, String text) {
+        super(lineNumber, TokenType.IDENTIFIER, literal);
+        this.text = text;
     }
 
-    public IdToken(int lineNumber, String name) {
-        super(lineNumber, name);
-        this.name = name;
+    public IdToken(int lineNumber, String text) {
+        super(lineNumber, TokenType.IDENTIFIER, text);
+        this.text = text;
     }
 
     @Override
@@ -20,11 +20,11 @@ public class IdToken extends Token {
 
     @Override
     public String getStr() {
-        return name;
+        return text;
     }
 
     @Override
     public Object value() {
-        return name;
+        return text;
     }
 }

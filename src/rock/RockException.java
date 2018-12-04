@@ -7,14 +7,6 @@ import java.io.IOException;
 public class RockException extends Exception {
 
 
-    public RockException(Exception e) {
-        super(e);
-    }
-
-    public RockException(String message, Exception e) {
-        super(message, e);
-    }
-
     private static String location(Token token) {
         if (token == Token.EOF) {
             return "EOF";
@@ -29,7 +21,7 @@ public class RockException extends Exception {
     }
 
 
-    public RockException(IOException e) {
+    public RockException(Exception e) {
         super(e);
     }
 }
