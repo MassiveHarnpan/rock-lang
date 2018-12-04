@@ -22,6 +22,8 @@ public class Controller implements Initializable {
     @FXML
     private TextArea tarCode;
     @FXML
+    private TextArea tarParser;
+    @FXML
     private TextArea tarConsole;
 
 
@@ -64,19 +66,19 @@ public class Controller implements Initializable {
         try {
             ASTree ast = parser.parse(lexer);
             if (ast == null) {
-                tarConsole.setText("#Failed\n");
+                tarParser.setText("#Failed\n");
             } else {
                 ast = ast.simplify();
-                tarConsole.setText("#Succeed\n");
-                tarConsole.appendText(ast.toString().replace("\n", "#EOF")+'\n');
+                tarParser.setText("#Succeed\n");
+                tarParser.appendText(ast.toString().replace("\n", "#EOF")+'\n');
                 outputParseResult(ast, 0);
             }
-            tarConsole.appendText("\n------------------------\n");
+            tarParser.appendText("\n------------------------\n");
             String rst = String.valueOf(ast.eval(new Environment(runtime)));
             tarConsole.appendText("\n=> " + rst);
         } catch (RockException e) {
             e.printStackTrace();
-            tarConsole.appendText("\n" + e.getMessage());
+            tarParser.appendText("\n" + e.getMessage());
         }
     }
 
@@ -88,7 +90,7 @@ public class Controller implements Initializable {
         sb.append("|-  ");
         if (ast.isLeaf()) {
             sb.append(ast.toString().replace("\n", "#EOL")).append('\n');
-            tarConsole.appendText(sb.toString());
+            tarParser.appendText(sb.toString());
             return;
         }
         for (int i = 0; i < ast.childCount(); i++) {
@@ -108,7 +110,7 @@ public class Controller implements Initializable {
 
     @FXML
     public void clearConsole() {
-        tarConsole.setText("");
+        tarParser.setText("");
     }
 
     @FXML

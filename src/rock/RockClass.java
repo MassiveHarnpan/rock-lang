@@ -18,7 +18,7 @@ public class RockClass {
         return body;
     }
 
-    public Object create(Environment env, Object... args) {
+    public RockObject create(Environment env, Object... args) {
         return null;
     }
 

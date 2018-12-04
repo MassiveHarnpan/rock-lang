@@ -17,63 +17,68 @@ public class BasicParser extends NonTerminalParser {
         Parser string = str().named("string");
         Parser number = num().named("number");
         Parser name = name().named("name");
-        Parser eol = sep(Token.EOL).named("eol");
+        Parser eos = sep(";", Token.EOL).named("eos");
 
         Parser fOperator = id("*", "/", "%").named("fOperator");
         Parser tOperator = id("+", "-").named("tOperator");
         Parser comparator = id("==", "!=", ">", "<", ">=", "<=").named("comparator");
 
-        ASTParser func = ast();
+        ASTParser program = ast();
+        ForkParser progStmt = fork();
+        ASTParser block = ast();
+        ForkParser stmt = fork();
         ASTParser expr = ast();
-        ASTParser args = ast();
-        ASTParser stmt = ast();
+        ForkParser primary = fork();
+        ForkParser factor = fork();
+        ASTParser asgnStmt = ast();
+        OptionParser argList = option();
+        OptionParser paramList = option();
+        ASTParser funcCall = ast();
+        ASTParser simple = ast();
+        ASTParser funcDef = ast();
+        ASTParser closure = ast();
+        ASTParser ifStmt = ast();
+        ASTParser whileStmt = ast();
+        ForkParser classStmt = fork();
+        ASTParser classBlock = ast();
+        ASTParser classDef = ast();
 
-        Parser primary = fork(seq(sep("("), stmt, sep(")")), func, number, name, string).named("primary");
-        Parser factor = fork(seq(Negtive.class).then(sep("-"), primary), primary).named("factor");
+
+        primary.or(seq(sep("("), stmt, sep(")")), funcCall, number, name, string).named("primary");
+        factor.or(seq(Negtive.class).then(sep("-"), primary), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
         Parser comp = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term)))).named("comp");
         expr.of(seq(Expr.class).then(comp, repeat(seq(comparator, comp)))).named("expr");
-        Parser simple = ast(seq(FuncCall.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
-
-
-        Parser assign = ast(seq(AssignStmt.class).then(name, sep("="), stmt)).named("assign");
-
-        Parser block = ast(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(sep(";", Token.EOL), maybe(stmt))), sep("}"))).named("block");
-        Parser whileStmt = ast(seq(WhileStmt.class).then(sep("while"),
-                expr,
-                block)).named("whileStmt");
-        Parser ifStmt = ast(seq(IfStmt.class).then(sep("if"),
-                expr,
-                block,
-                maybe(seq(sep("else"),
-                        block)
-                ))).named("ifStmt");
-
-
-
-        // function
-        Parser params = ast(seq(sep("("), option(seq(
-                name,
-                repeat(seq(sep(","), name))
-        )), sep(")"))).named("params");
-
-        args.of(seq(sep("("), maybe(seq(
-                expr,
-                repeat(seq(sep(","), expr))
-        )), sep(")"))).named("args");
-
-        Parser def = ast(seq(FuncDef.class).then(sep("def"), name, params, block)).named("def");
-        func.of(seq(FuncCall.class).then(name, args)).named("func");
-
-
-        stmt.of(fork(whileStmt, ifStmt, assign, expr)).named("stmt");
 
 
 
 
+        program.of(seq(Block.class).then(maybe(progStmt), repeat(seq(eos, maybe(progStmt))))).named("program");
+        progStmt.or(funcDef, classDef, stmt).named("progStmt");
+        block.of(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(eos, maybe(stmt))), sep("}"))).named("block");
+        stmt.or(ifStmt, whileStmt, asgnStmt, closure, simple, expr).named("stmt");
+        asgnStmt.of(seq(AssignStmt.class).then(name, sep("="), stmt)).named("asgnStmt");
+
+        argList.of(ast(seq(ASTList.class).then(stmt, repeat(seq(sep(","), stmt))))).named("argList");
+        paramList.of(ast(seq(ASTList.class).then(name, repeat(seq(sep(","), name))))).named("paramList");
+
+        funcDef.of(seq(FuncDef.class).then(sep("def"), name, sep("("), paramList, sep(")"), block)).named("funcDef");
+        funcCall.of(seq(FuncCall.class).then(name, sep("("), argList, sep(")"))).named("funcCall");
+
+        closure.of(seq(Closure.class).then(sep("fun"), sep("("), paramList, sep(")"), block)).named("closure");
+
+        simple.of(seq(FuncCall.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
 
 
-        program = repeat(Block.class, seq(maybe(fork(func, simple, def, stmt)), sep(";", Token.EOL))).named("program");
+        ifStmt.of(seq(IfStmt.class).then(sep("if"), stmt, block, maybe(seq(sep("else"), block)))).named("ifStmt");
+        whileStmt.of(seq(WhileStmt.class).then(sep("while"), stmt, block)).named("whileStmt");
+
+
+        classStmt.or(funcDef, asgnStmt).named("classStmt");
+        classBlock.of(seq(Block.class).then(sep("{"), maybe(classStmt), repeat(seq(eos, maybe(classStmt))), sep("}"))).named("classBlock");
+        classDef.of(seq(ClassDef.class).then(sep("class"), name, classBlock)).named("classDef");
+
+        this.program = program;
     }
 
     private Parser program;

@@ -48,7 +48,7 @@ public class Function {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(name).append("(");
+        StringBuffer sb = new StringBuffer().append(name).append("(");
         for (int i = 0; i < params.length; i++) {
             sb.append(params[i]);
             if (i + 1 < params.length) {

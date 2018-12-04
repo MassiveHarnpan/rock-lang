@@ -14,6 +14,7 @@ public abstract class Parser {
     private static int i = 0;
 
     public boolean parse(Lexer lexer, List<ASTree> res) throws RockException {
+        if (i > 50) System.exit(-1);
         i ++ ;
         StringBuffer ind = new StringBuffer();
         for (int j = 0; j < i; j++) {
