@@ -180,11 +180,11 @@ public abstract class Parser {
     }
 
     public static TerminalParser num() {
-        return new TerminalParser(Primary.class, NumToken.class);
+        return new TerminalParser(Basic.class, NumToken.class);
     }
 
     public static TerminalParser str() {
-        return new TerminalParser(Primary.class, StrToken.class);
+        return new TerminalParser(Basic.class, StrToken.class);
     }
 
     public static TerminalParser name() {

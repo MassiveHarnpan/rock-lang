@@ -10,4 +10,9 @@ public class NativeEvaluator implements Evaluator {
     public Object eval(Environment env) throws RockException {
         return null;
     }
+
+    @Override
+    public Object eval(Environment env, Object base) throws RockException {
+        return null;
+    }
 }

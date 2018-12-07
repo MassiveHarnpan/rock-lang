@@ -28,12 +28,17 @@ public class BasicParser extends NonTerminalParser {
         ASTParser block = ast();
         ForkParser stmt = fork();
         ASTParser expr = ast();
-        ForkParser primary = fork();
+        ASTParser arguments = ast();
+        ASTParser dot = ast();
+        ASTParser index = ast();
+        ForkParser postfix = fork();
+        ForkParser basic = fork();
+        ASTParser primary = ast();
         ForkParser factor = fork();
         ASTParser asgnStmt = ast();
         OptionParser argList = option();
         OptionParser paramList = option();
-        ASTParser funcCall = ast();
+        //ASTParser funcCall = ast();
         ASTParser simple = ast();
         ASTParser funcDef = ast();
         ASTParser closure = ast();
@@ -44,7 +49,12 @@ public class BasicParser extends NonTerminalParser {
         ASTParser classDef = ast();
 
 
-        primary.or(seq(sep("("), stmt, sep(")")), funcCall, number, name, string).named("primary");
+
+        arguments.of(seq(Arguments.class).then(sep("("), maybe(seq(stmt, repeat(seq(sep(","), stmt)))), sep(")"))).named("arguments");
+        dot.of(seq(Dot.class).then(sep("."), name)).named("dot");
+        postfix.or(arguments, dot).named("postfix");
+        basic.or(seq(sep("("), stmt, sep(")")), number, name, string).named("basic");
+        primary.of(seq(Primary.class).then(basic, repeat(postfix))).named("primary");
         factor.or(seq(Negtive.class).then(sep("-"), primary), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
         Parser comp = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term)))).named("comp");
@@ -63,7 +73,9 @@ public class BasicParser extends NonTerminalParser {
         paramList.of(ast(seq(ASTList.class).then(name, repeat(seq(sep(","), name))))).named("paramList");
 
         funcDef.of(seq(FuncDef.class).then(sep("def"), name, sep("("), paramList, sep(")"), block)).named("funcDef");
-        funcCall.of(seq(FuncCall.class).then(name, sep("("), argList, sep(")"))).named("funcCall");
+
+        //funcCall.of(seq(FuncCall.class).then(name, sep("("), argList, sep(")"))).named("funcCall");
+
 
         closure.of(seq(Closure.class).then(sep("fun"), sep("("), paramList, sep(")"), block)).named("closure");
 

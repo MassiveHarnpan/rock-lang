@@ -140,3 +140,23 @@ delay(1000)
 #print end - start
 #ln
 
+
+f = fun (msg) {
+    println(msg)
+}
+
+f("hello")
+
+
+def repeater(times) {
+    fun (msg) {
+        println(msg)
+        println(msg)
+    }
+}
+
+repeater(2)("hello")
+
+
+
+

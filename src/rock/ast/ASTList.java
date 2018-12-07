@@ -41,6 +41,11 @@ public class ASTList extends ASTree {
     }
 
     @Override
+    public Object eval(Environment env, Object base) throws RockException {
+        return eval(env);
+    }
+
+    @Override
     public ASTree simplify() {
         for (int i = 0; i < childCount(); i++) {
             children.set(i, children.get(i).simplify());

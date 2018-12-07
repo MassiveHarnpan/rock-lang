@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Lexer {
 
     public static final String regexPat =
-            "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|(fun|while|for|if|else|def|!=|==|<=|>=|&&|\\|\\||\\p{Punct})|[A-Z_a-z][A-Z_a-z0-9]*)?";
+            "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\|\\\\n|[^\"])*\")|(fun|while|for|if|else|def|class|extends|!=|==|<=|>=|&&|\\|\\||\\p{Punct})|[A-Z_a-z][A-Z_a-z0-9]*)?";
     private Pattern pattern = Pattern.compile(regexPat);
     private ArrayList<Token> queue = new ArrayList<>();
     private int pointer = 0;

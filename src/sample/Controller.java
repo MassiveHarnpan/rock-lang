@@ -4,13 +4,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
-import rock.Environment;
-import rock.Function;
-import rock.Lexer;
-import rock.RockException;
+import rock.*;
 import rock.ast.ASTree;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
+import rock.runtime.NativeEvaluator;
 import rock.runtime.NativeFunction;
 
 import java.io.StringReader;
@@ -39,17 +37,26 @@ public class Controller implements Initializable {
             Function currentTimeMillis = new NativeFunction("currentTimeMillis", System.class.getDeclaredMethod("currentTimeMillis"));
             runtime.put("currentTimeMillis", currentTimeMillis);
 
-            runtime.put("print", new Function("print", new String[] {"msg"}, env -> {
-                tarConsole.appendText(String.valueOf(env.get("msg")));
-                return null;
+            runtime.put("print", new Function("print", new String[]{"msg"}, new NativeEvaluator() {
+                @Override
+                public Object eval(Environment env) throws RockException {
+                    tarConsole.appendText(String.valueOf(env.get("msg")));
+                    return null;
+                }
             }));
-            runtime.put("println", new Function("print", new String[] {"msg"}, env -> {
-                tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
-                return null;
+            runtime.put("println", new Function("print", new String[] {"msg"}, new NativeEvaluator() {
+                @Override
+                public Object eval(Environment env) throws RockException {
+                    tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
+                    return null;
+                }
             }));
-            runtime.put("ln", new Function("print", new String[] {}, env -> {
-                tarConsole.appendText("\n");
-                return null;
+            runtime.put("ln", new Function("print", new String[] {}, new NativeEvaluator() {
+                @Override
+                public Object eval(Environment env) throws RockException {
+                    tarConsole.appendText("\n");
+                    return null;
+                }
             }));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
