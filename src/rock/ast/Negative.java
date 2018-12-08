@@ -1,6 +1,9 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
+import rock.data.RockDec;
+import rock.data.RockInt;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 import rock.util.Logger;
@@ -16,17 +19,17 @@ public class Negative extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
-        Object result = origin().eval(env);
+    public Rock eval(Environment env) throws RockException {
+        Object result = origin().eval(env).get();
         if (!(result instanceof Number)) {
             throw new UnsupportedOperationException("negative", result.toString());
         }
         Number num = (Number) result;
         Logger.log("negative.origin = " + num);
         if (result instanceof Integer || result instanceof Long) {
-            return -num.intValue();
+            return new RockInt(-num.intValue());
         } else {
-            return -num.doubleValue();
+            return new RockDec(-num.doubleValue());
         }
     }
 

@@ -1,8 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.Function;
-import rock.util.Logger;
+import rock.data.Environment;
+import rock.data.Function;
+import rock.data.Rock;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public class Closure extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) {
+    public Rock eval(Environment env) {
         Function func = new Function(null, params().toArray(new String[params().size()]), body(), env);
         //Logger.log("get fun " + func);
         return func;

@@ -1,7 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.Function;
+import rock.data.Environment;
+import rock.data.Function;
+import rock.data.Rock;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 import rock.util.Logger;
@@ -23,19 +24,15 @@ public class Simple extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
-        Object rst = expr().eval(env);
-        if (!(rst instanceof Function)) {
-            throw new UnsupportedOperationException("call function", rst.toString());
-        }
-        Function func = (Function) rst;
+    public Rock eval(Environment env) throws RockException {
+        Rock func = expr().eval(env);
         ASTree args = args();
-        Object[] argarr = new Object[args.childCount()];
+        Rock[] argarr = new Rock[args.childCount()];
         for (int i = 0; i < argarr.length; i++) {
             argarr[i] = args.child(i).eval(env);
         }
         Logger.log("add args: " + Arrays.asList(argarr));
-        return func.invoke(env, argarr);
+        return func.invoke(argarr);
     }
 
     @Override

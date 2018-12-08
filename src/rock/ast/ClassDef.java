@@ -1,7 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.RockClass;
+import rock.data.Environment;
+import rock.data.Rock;
+import rock.data.RockClass;
 import rock.exception.RockException;
 
 public class ClassDef extends ASTList {
@@ -22,7 +23,7 @@ public class ClassDef extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
+    public Rock eval(Environment env) throws RockException {
         RockClass superClass = null;
         String superClassName = superClassName();
         if (superClassName != null) {
@@ -33,7 +34,7 @@ public class ClassDef extends ASTList {
             superClass = (RockClass) obj;
         }
         RockClass newClass = new RockClass(name(), superClass, body(), env);
-        return env.put(newClass.name(), newClass);
+        return env.set(newClass.name(), newClass);
     }
 
     @Override

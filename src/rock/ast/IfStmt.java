@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
 import rock.exception.RockException;
 
 public class IfStmt extends ASTList {
@@ -23,7 +24,7 @@ public class IfStmt extends ASTList {
 
 
     @Override
-    public Object eval(Environment env) throws RockException {
+    public Rock eval(Environment env) throws RockException {
         Object FALSE = Integer.valueOf(0);
         Object condResult = condition().eval(env);
         boolean match = condResult != null && !FALSE.equals(condResult);

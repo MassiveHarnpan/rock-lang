@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Rock;
+import rock.data.Environment;
 import rock.exception.RockException;
 
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class ASTList extends ASTree {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
-        Object result = null;
+    public Rock eval(Environment env) throws RockException {
+        Rock result = null;
         for (ASTree ast : children) {
             result = ast.eval(env);
         }
@@ -41,7 +42,7 @@ public class ASTList extends ASTree {
     }
 
     @Override
-    public Object eval(Environment env, Object base) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         return eval(env);
     }
 

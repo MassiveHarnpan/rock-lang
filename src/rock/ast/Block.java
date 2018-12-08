@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
 import rock.exception.RockException;
 
 import java.util.Iterator;
@@ -13,8 +14,8 @@ public class Block extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
-        Object result = null;
+    public Rock eval(Environment env) throws RockException {
+        Rock result = null;
         for (Iterator<ASTree> it = iterator(); it.hasNext(); ) {
             result = it.next().eval(env);
         }

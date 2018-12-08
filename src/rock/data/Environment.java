@@ -1,17 +1,14 @@
-package rock;
+package rock.data;
 
 import rock.exception.RockException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Environment {
+public class Environment implements GetterAndSetter {
 
     private Environment outer;
-    protected Map<String, Object> values = new HashMap<>();
+    protected Map<String, Rock> values = new HashMap<>();
 
     public Environment(Environment outer) {
         this.outer = outer;
@@ -30,7 +27,8 @@ public class Environment {
         return outer.locate(key);
     }
 
-    public Object put(String key, Object value) {
+    @Override
+    public Rock set(String key, Rock value) {
         Environment env = locate(key);
         if (env == null) {
             env = this;
@@ -38,7 +36,8 @@ public class Environment {
         return env.values.put(key, value);
     }
 
-    public Object get(String key) throws RockException {
+    @Override
+    public Rock get(String key) throws RockException {
         Environment env = locate(key);
         if (env == null) {
             return null;

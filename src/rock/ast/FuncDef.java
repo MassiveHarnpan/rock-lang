@@ -1,7 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.Function;
+import rock.data.Environment;
+import rock.data.Function;
+import rock.data.Rock;
 import rock.util.Logger;
 
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ public class FuncDef extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) {
+    public Rock eval(Environment env) {
         Function func = new Function(name(), params().toArray(new String[params().size()]), body(), env);
         Logger.log("put " + func);
-        return env.put(func.name(), func);
+        return env.set(func.name(), func);
     }
 
     @Override

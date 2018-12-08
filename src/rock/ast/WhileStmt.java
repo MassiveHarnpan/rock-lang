@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
 import rock.exception.RockException;
 
 public class WhileStmt extends ASTList {
@@ -21,10 +22,10 @@ public class WhileStmt extends ASTList {
 
 
     @Override
-    public Object eval(Environment env) throws RockException {
+    public Rock eval(Environment env) throws RockException {
         ASTree cond =  condition();
         ASTree body = body();
-        Object result = null;
+        Rock result = null;
         while (!Integer.valueOf(0).equals(cond.eval(env))) {
             result = body.eval(env);
         }

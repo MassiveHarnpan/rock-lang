@@ -1,7 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.Function;
+import rock.data.Rock;
+import rock.data.Environment;
+import rock.data.Function;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 
@@ -12,16 +13,12 @@ public class Arguments extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env, Object base) throws RockException {
-        if (!(base instanceof Function)) {
-            throw new UnsupportedOperationException("CallFunction", base.getClass().getName());
-        }
-        Function func = (Function) base;
-        Object[] args = new Object[childCount()];
+    public Rock eval(Environment env, Rock base) throws RockException {
+        Rock[] args = new Rock[childCount()];
         for (int i = 0; i < childCount(); i++) {
             args[i] = child(i).eval(env);
         }
-        return func.invoke(env, args);
+        return base.invoke(args);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
 import rock.exception.RockException;
 
 import java.util.Iterator;
@@ -26,13 +27,13 @@ public class Primary extends ASTList {
 
 
     @Override
-    public Object eval(Environment env) throws RockException {
+    public Rock eval(Environment env) throws RockException {
         return evalSub(env, 0);
     }
 
-    public Object evalSub(Environment env, int nest) throws RockException {
+    public Rock evalSub(Environment env, int nest) throws RockException {
         if (nest < postfixCount()) {
-            Object base = evalSub(env, nest + 1);
+            Rock base = evalSub(env, nest + 1);
             ASTree postfix = postfix(nest);
             return postfix.eval(env, base);
         } else {

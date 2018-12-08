@@ -1,8 +1,10 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
+import rock.data.RockName;
 import rock.exception.RockException;
-import rock.RockObject;
+import rock.data.RockObject;
 import rock.exception.UnsupportedASTException;
 import rock.exception.UnsupportedOperationException;
 
@@ -17,15 +19,11 @@ public class Dot extends ASTList {
 
 
     @Override
-    public Object eval(Environment env, Object base) throws RockException {
-        if (!(base instanceof RockObject)) {
-            throw new UnsupportedOperationException("dot", base.getClass().getName());
-        }
+    public Rock eval(Environment env, Rock base) throws RockException {
         if (!(child(0) instanceof Name)) {
             throw new UnsupportedASTException(child(0).getClass().getName(), Name.class.getName());
         }
-        RockObject obj = (RockObject) base;
-        return obj.get(name());
+        return child(0).eval(base.env(), base);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
+import rock.data.Environment;
+import rock.data.Rock;
+import rock.data.RockName;
 import rock.exception.RockException;
 import rock.token.Token;
 
@@ -11,7 +13,12 @@ public class Name extends ASTLeaf {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
-        return env.get(token().literal());
+    public Rock eval(Environment env) throws RockException {
+        return new RockName(env, token().literal());
+    }
+
+    @Override
+    public Rock eval(Environment env, Rock base) throws RockException {
+        return new RockName(base, token().literal());
     }
 }

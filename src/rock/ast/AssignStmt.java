@@ -1,7 +1,8 @@
 package rock.ast;
 
-import rock.Environment;
-import rock.RockObject;
+import rock.data.Environment;
+import rock.data.Rock;
+import rock.data.RockObject;
 import rock.exception.RockException;
 import rock.exception.UnsupportedASTException;
 import rock.exception.UnsupportedOperationException;
@@ -24,30 +25,19 @@ public class AssignStmt extends ASTList {
     }
 
     @Override
-    public Object eval(Environment env) throws RockException {
+    public Rock eval(Environment env) throws RockException {
         ASTree dest = name();
-        Object val = value().eval(env);
+        Rock val = value().eval(env);
         Logger.log(dest + " << " + val);
 
-        if (dest instanceof Name) {
-            Name name = (Name) dest;
-            env.put(name.token().literal(), val);
-        } else if (dest instanceof Primary) {
-            Primary primary = (Primary) dest;
-            if (!(primary.postfixCount() <= 0 || primary.postfix(0) instanceof Dot)) {
-                throw new UnsupportedOperationException("assign", primary.postfix(0).getClass().getName());
-            }
-            Object obj = primary.evalSub(env, 1);
-            if (obj instanceof RockObject) {
-                RockObject ro = (RockObject) obj;
-                ro.put(((Dot) primary.child(primary.childCount() - 1)).name(), val);
-            } else {
-                throw new UnsupportedOperationException("assign", obj.getClass().getName());
-            }
+
+        if (dest instanceof Name || dest instanceof Primary) {
+            Rock name = dest.eval(env);
+            name.set(val);
+            return val;
         } else {
             throw new UnsupportedASTException(dest.getClass().getName(), Name.class.getName(), Primary.class.getName());
         }
-        return val;
     }
 
     @Override

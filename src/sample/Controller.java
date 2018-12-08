@@ -6,6 +6,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import rock.*;
 import rock.ast.ASTree;
+import rock.data.Environment;
+import rock.data.Function;
+import rock.data.Rock;
+import rock.data.RockName;
 import rock.exception.RockException;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
@@ -36,25 +40,25 @@ public class Controller implements Initializable {
             //Function print = new NativeFunction("print", System.out, System.out.getClass().getDeclaredMethod("print", Object.class));
             //runtime.put(print.name(), print);
             Function currentTimeMillis = new NativeFunction("currentTimeMillis", System.class.getDeclaredMethod("currentTimeMillis"));
-            runtime.put("currentTimeMillis", currentTimeMillis);
+            runtime.set("currentTimeMillis", currentTimeMillis);
 
-            runtime.put("print", new Function("print", new String[]{"msg"}, new NativeEvaluator() {
+            runtime.set("print", new Function("print", new String[]{"msg"}, new NativeEvaluator() {
                 @Override
-                public Object eval(Environment env) throws RockException {
+                public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText(String.valueOf(env.get("msg")));
                     return null;
                 }
             }, runtime));
-            runtime.put("println", new Function("print", new String[] {"msg"}, new NativeEvaluator() {
+            runtime.set("println", new Function("print", new String[] {"msg"}, new NativeEvaluator() {
                 @Override
-                public Object eval(Environment env) throws RockException {
+                public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
                     return null;
                 }
             }, runtime));
-            runtime.put("ln", new Function("print", new String[] {}, new NativeEvaluator() {
+            runtime.set("ln", new Function("print", new String[] {}, new NativeEvaluator() {
                 @Override
-                public Object eval(Environment env) throws RockException {
+                public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText("\n");
                     return null;
                 }
@@ -82,7 +86,8 @@ public class Controller implements Initializable {
                 outputParseResult(ast, 0);
             }
             tarParser.appendText("\n------------------------\n");
-            String rst = String.valueOf(ast.eval(new Environment(runtime)));
+            Rock r = ast.eval(new Environment(runtime));
+            String rst = String.valueOf(r == null ? "<>" : r.get());
             tarConsole.appendText("\n=> " + rst);
         } catch (RockException e) {
             e.printStackTrace();

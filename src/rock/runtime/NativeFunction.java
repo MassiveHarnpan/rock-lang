@@ -1,7 +1,7 @@
 package rock.runtime;
 
-import rock.Environment;
-import rock.Function;
+import rock.data.Function;
+import rock.data.Rock;
 import rock.exception.RockException;
 
 import java.lang.reflect.Method;
@@ -31,12 +31,17 @@ public class NativeFunction extends Function {
     }
 
     @Override
-    public Object invoke(Environment env, Object... args) throws RockException {
+    public Rock invoke(Rock... args) throws RockException {
         if (args.length != method.getParameterCount()) {
             throw new RockException("wrong number of args");
         }
+        Object[] argarr = new Object[args.length];
+        for (int i = 0; i < argarr.length; i++) {
+            argarr[i] = args[i].get();
+        }
         try {
-            return method.invoke(obj, args);
+            Object r = method.invoke(obj, argarr);
+            return r == null ? null : new Rock();
         } catch (Exception e) {
             throw new RockException(e);
         }
