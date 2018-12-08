@@ -1,4 +1,4 @@
-package rock;
+package rock.exception;
 
 import rock.token.Token;
 

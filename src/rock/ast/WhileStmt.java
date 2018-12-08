@@ -1,7 +1,7 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 
 public class WhileStmt extends ASTList {
 
@@ -29,5 +29,10 @@ public class WhileStmt extends ASTList {
             result = body.eval(env);
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "while " + condition() + " " + body();
     }
 }

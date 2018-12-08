@@ -1,8 +1,10 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.util.Logger;
+
+import java.util.Iterator;
 
 public class Expr extends ASTList {
 
@@ -30,4 +32,17 @@ public class Expr extends ASTList {
         return leftVal;
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("(");
+        Iterator<ASTree> itr = iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next());
+            if (itr.hasNext()) {
+                sb.append(" ");
+            }
+        }
+        return sb.append(")").toString();
+    }
 }

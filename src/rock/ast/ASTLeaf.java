@@ -1,7 +1,7 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.token.Token;
 
 public class ASTLeaf extends ASTree {

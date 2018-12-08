@@ -1,8 +1,6 @@
 package rock.ast;
 
-import rock.Environment;
 import rock.Evaluator;
-import rock.RockException;
 
 public abstract class ASTree implements Evaluator {
 

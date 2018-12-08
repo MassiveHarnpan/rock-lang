@@ -1,7 +1,9 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
+
+import java.util.Iterator;
 
 public class Primary extends ASTList {
 
@@ -36,5 +38,15 @@ public class Primary extends ASTList {
         } else {
             return basic().eval(env);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        Iterator<ASTree> itr = iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next());
+        }
+        return sb.toString();
     }
 }

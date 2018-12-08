@@ -1,6 +1,6 @@
 package rock.token;
 
-import rock.RockException;
+import rock.exception.RockException;
 
 public class Token {
     public static final Token EOF = new Token(-1, "#EOF");

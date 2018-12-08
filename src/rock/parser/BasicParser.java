@@ -1,7 +1,7 @@
 package rock.parser;
 
 import rock.Lexer;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.ast.*;
 import rock.token.*;
 
@@ -36,9 +36,7 @@ public class BasicParser extends NonTerminalParser {
         ASTParser primary = ast();
         ForkParser factor = fork();
         ASTParser asgnStmt = ast();
-        OptionParser argList = option();
         OptionParser paramList = option();
-        //ASTParser funcCall = ast();
         ASTParser simple = ast();
         ASTParser funcDef = ast();
         ASTParser closure = ast();
@@ -55,7 +53,7 @@ public class BasicParser extends NonTerminalParser {
         postfix.or(arguments, dot).named("postfix");
         basic.or(seq(sep("("), stmt, sep(")")), number, name, string).named("basic");
         primary.of(seq(Primary.class).then(basic, repeat(postfix))).named("primary");
-        factor.or(seq(Negtive.class).then(sep("-"), primary), primary).named("factor");
+        factor.or(ast(seq(Negative.class).then(sep("-"), primary)), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
         Parser comp = ast(seq(Expr.class).then(term, repeat(seq(tOperator, term)))).named("comp");
         expr.of(seq(Expr.class).then(comp, repeat(seq(comparator, comp)))).named("expr");
@@ -67,19 +65,16 @@ public class BasicParser extends NonTerminalParser {
         progStmt.or(funcDef, classDef, stmt).named("progStmt");
         block.of(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(eos, maybe(stmt))), sep("}"))).named("block");
         stmt.or(ifStmt, whileStmt, asgnStmt, closure, simple, expr).named("stmt");
-        asgnStmt.of(seq(AssignStmt.class).then(name, sep("="), stmt)).named("asgnStmt");
+        asgnStmt.of(seq(AssignStmt.class).then(primary, sep("="), stmt)).named("asgnStmt");
 
-        argList.of(ast(seq(ASTList.class).then(stmt, repeat(seq(sep(","), stmt))))).named("argList");
         paramList.of(ast(seq(ASTList.class).then(name, repeat(seq(sep(","), name))))).named("paramList");
 
         funcDef.of(seq(FuncDef.class).then(sep("def"), name, sep("("), paramList, sep(")"), block)).named("funcDef");
 
-        //funcCall.of(seq(FuncCall.class).then(name, sep("("), argList, sep(")"))).named("funcCall");
-
 
         closure.of(seq(Closure.class).then(sep("fun"), sep("("), paramList, sep(")"), block)).named("closure");
 
-        simple.of(seq(FuncCall.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
+        simple.of(seq(Simple.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
 
 
         ifStmt.of(seq(IfStmt.class).then(sep("if"), stmt, block, maybe(seq(sep("else"), block)))).named("ifStmt");
@@ -88,7 +83,7 @@ public class BasicParser extends NonTerminalParser {
 
         classStmt.or(funcDef, asgnStmt).named("classStmt");
         classBlock.of(seq(Block.class).then(sep("{"), maybe(classStmt), repeat(seq(eos, maybe(classStmt))), sep("}"))).named("classBlock");
-        classDef.of(seq(ClassDef.class).then(sep("class"), name, classBlock)).named("classDef");
+        classDef.of(seq(ClassDef.class).then(sep("class"), name, maybe(seq(sep("extends"), name)), classBlock)).named("classDef");
 
         this.program = program;
     }

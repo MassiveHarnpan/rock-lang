@@ -5,6 +5,7 @@ import rock.Function;
 import rock.util.Logger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FuncDef extends ASTList {
@@ -32,8 +33,23 @@ public class FuncDef extends ASTList {
 
     @Override
     public Object eval(Environment env) {
-        Function func = new Function(name(), params().toArray(new String[params().size()]), body());
+        Function func = new Function(name(), params().toArray(new String[params().size()]), body(), env);
         Logger.log("put " + func);
         return env.put(func.name(), func);
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("def ").append(name()).append(" (");
+        Iterator<String> itr = params().iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next());
+            if (itr.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        sb.append(") ").append(body());
+        return sb.toString();
     }
 }

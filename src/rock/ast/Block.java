@@ -1,7 +1,7 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 
 import java.util.Iterator;
 
@@ -39,5 +39,17 @@ public class Block extends ASTList {
             return asl.child(0);
         }
         return asl;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append('{').append("\n");
+        Iterator<ASTree> itr = children.iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next().toString());
+            sb.append('\n');
+        }
+        return sb.append('}').toString();
     }
 }

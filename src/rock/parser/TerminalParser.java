@@ -1,8 +1,7 @@
 package rock.parser;
 
-import rock.RockException;
+import rock.exception.RockException;
 import rock.ast.ASTLeaf;
-import rock.ast.ASTList;
 import rock.ast.ASTree;
 import rock.Lexer;
 import rock.token.Token;
@@ -10,8 +9,6 @@ import rock.util.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
-
-import static rock.token.Token.EOL;
 
 public class TerminalParser extends Parser {
 

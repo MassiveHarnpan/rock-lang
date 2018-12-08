@@ -1,7 +1,7 @@
 package rock.parser;
 
 import rock.Lexer;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.ast.ASTLeaf;
 import rock.ast.ASTree;
 import rock.token.Token;

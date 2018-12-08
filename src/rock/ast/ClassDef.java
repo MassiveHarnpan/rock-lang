@@ -2,7 +2,7 @@ package rock.ast;
 
 import rock.Environment;
 import rock.RockClass;
-import rock.RockException;
+import rock.exception.RockException;
 
 public class ClassDef extends ASTList {
     public ClassDef(ASTree... children) {
@@ -13,13 +13,37 @@ public class ClassDef extends ASTList {
         return ((ASTLeaf) child(0)).token().literal();
     }
 
+    public String superClassName() {
+        return childCount() == 3 ? ((Name) child(1)).token().literal() : null;
+    }
+
     public ASTree body() {
-        return child(1);
+        return child(childCount() - 1);
     }
 
     @Override
     public Object eval(Environment env) throws RockException {
-        RockClass newClass = new RockClass(name(), body());
+        RockClass superClass = null;
+        String superClassName = superClassName();
+        if (superClassName != null) {
+            Object obj = env.get(superClassName());
+            if (obj == null || !(obj instanceof RockClass)) {
+                throw new RockException("cannot find class: " + superClassName);
+            }
+            superClass = (RockClass) obj;
+        }
+        RockClass newClass = new RockClass(name(), superClass, body(), env);
         return env.put(newClass.name(), newClass);
+    }
+
+    @Override
+    public String toString() {
+        String s = superClassName();
+        if (s == null) {
+            s = "";
+        } else {
+            s = "extends " + s;
+        }
+        return "class " + name() + " " + s + " " + body();
     }
 }

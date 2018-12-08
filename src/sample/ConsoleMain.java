@@ -1,7 +1,7 @@
 package sample;
 
 import rock.Lexer;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.ast.ASTree;
 import rock.parser.BasicParser;
 import rock.parser.Parser;

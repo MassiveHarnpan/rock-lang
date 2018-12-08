@@ -1,5 +1,7 @@
 package rock;
 
+import rock.exception.RockException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +11,7 @@ import java.util.Map;
 public class Environment {
 
     private Environment outer;
-    private Map<String, Object> values = new HashMap<>();
+    protected Map<String, Object> values = new HashMap<>();
 
     public Environment(Environment outer) {
         this.outer = outer;
@@ -36,7 +38,7 @@ public class Environment {
         return env.values.put(key, value);
     }
 
-    public Object get(String key) {
+    public Object get(String key) throws RockException {
         Environment env = locate(key);
         if (env == null) {
             return null;
@@ -48,4 +50,8 @@ public class Environment {
         return outer;
     }
 
+    @Override
+    public String toString() {
+        return values.toString();
+    }
 }

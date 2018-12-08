@@ -1,11 +1,10 @@
 package rock.parser;
 
 import rock.Lexer;
-import rock.RockException;
+import rock.exception.RockException;
 import rock.ast.ASTList;
 import rock.ast.ASTree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ASTParser extends NonTerminalParser {

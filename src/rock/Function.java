@@ -1,6 +1,6 @@
 package rock;
 
-import rock.ast.ASTree;
+import rock.exception.RockException;
 import rock.util.Logger;
 
 import java.util.Arrays;
@@ -10,11 +10,13 @@ public class Function {
     private String name;
     private String[] params;
     private Evaluator body;
+    private Environment env;
 
-    public Function(String name, String[] params, Evaluator body) {
+    public Function(String name, String[] params, Evaluator body, Environment env) {
         this.name = name;
         this.params = params;
         this.body = body;
+        this.env = env;
     }
 
     public String name() {
@@ -39,7 +41,7 @@ public class Function {
         if (args.length != params.length) {
             throw new RockException("wrong number of args: expect " + params.length + " get " + args.length);
         }
-        Environment newEnv = new Environment(env);
+        Environment newEnv = new Environment(this.env);
         for (int i = 0; i < params.length; i++) {
             newEnv.put(params[i], args[i]);
         }

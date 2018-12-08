@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import rock.*;
 import rock.ast.ASTree;
+import rock.exception.RockException;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
 import rock.runtime.NativeEvaluator;
@@ -43,21 +44,21 @@ public class Controller implements Initializable {
                     tarConsole.appendText(String.valueOf(env.get("msg")));
                     return null;
                 }
-            }));
+            }, runtime));
             runtime.put("println", new Function("print", new String[] {"msg"}, new NativeEvaluator() {
                 @Override
                 public Object eval(Environment env) throws RockException {
                     tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
                     return null;
                 }
-            }));
+            }, runtime));
             runtime.put("ln", new Function("print", new String[] {}, new NativeEvaluator() {
                 @Override
                 public Object eval(Environment env) throws RockException {
                     tarConsole.appendText("\n");
                     return null;
                 }
-            }));
+            }, runtime));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -77,7 +78,7 @@ public class Controller implements Initializable {
             } else {
                 ast = ast.simplify();
                 tarParser.setText("#Succeed\n");
-                tarParser.appendText(ast.toString().replace("\n", "#EOF")+'\n');
+                tarParser.appendText(ast.toString()/*.replace("\n", "#EOF")*/+'\n');
                 outputParseResult(ast, 0);
             }
             tarParser.appendText("\n------------------------\n");

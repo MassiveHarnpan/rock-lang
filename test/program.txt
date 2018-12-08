@@ -150,13 +150,47 @@ f("hello")
 
 def repeater(times) {
     fun (msg) {
-        println(msg)
-        println(msg)
+        counter = times;
+        while counter > 0 {
+            println(msg)
+            counter = counter - 1
+        }
     }
 }
 
 repeater(2)("hello")
 
+class Vec {
+    x = y = 0
+    def new() {
+    }
+    
+    def move(nx, ny) {
+        x = nx; y = ny
+    }
+}
+v = Vec.new()
+v.x
+v.x = 90
+v.x
+
+class Pos extends Vec {
+    name = ""
+    def new(n) {
+        name = n
+    }
+    
+    def move(nx, ny) {
+        println(name + " moved from (" + x +", " + y + ")")
+        x = nx; y = ny
+        print(" to (" + x +", " + y + ")")
+        ln()
+    }
+}
+
+p = Pos.new("Point_1")
+p.move(89, 300)
+p.move(-6, -77)
 
 
 

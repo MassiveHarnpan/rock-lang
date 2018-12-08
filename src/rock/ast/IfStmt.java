@@ -1,7 +1,7 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 
 public class IfStmt extends ASTList {
 
@@ -26,7 +26,7 @@ public class IfStmt extends ASTList {
     public Object eval(Environment env) throws RockException {
         Object FALSE = Integer.valueOf(0);
         Object condResult = condition().eval(env);
-        boolean match = !FALSE.equals(condResult);
+        boolean match = condResult != null && !FALSE.equals(condResult);
         System.out.println(match);
         if (match) {
             return thenBlock().eval(env);
@@ -34,5 +34,15 @@ public class IfStmt extends ASTList {
             ASTree elseBlock = elseBlock();
             return elseBlock == null ? null : elseBlock.eval(env);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("if ").append(condition()).append(" ").append(thenBlock());
+        if (childCount() > 2) {
+            sb.append(" else ").append(elseBlock());
+        }
+        return sb.toString();
     }
 }

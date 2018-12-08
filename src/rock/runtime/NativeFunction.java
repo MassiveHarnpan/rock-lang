@@ -2,8 +2,7 @@ package rock.runtime;
 
 import rock.Environment;
 import rock.Function;
-import rock.RockException;
-import rock.ast.ASTree;
+import rock.exception.RockException;
 
 import java.lang.reflect.Method;
 
@@ -13,7 +12,7 @@ public class NativeFunction extends Function {
     private Method method;
 
     public NativeFunction(String name, Object obj, Method method) {
-        super(name, paramNames(method), null);
+        super(name, paramNames(method), null, null);
         this.obj = obj;
         this.method = method;
     }
@@ -41,5 +40,10 @@ public class NativeFunction extends Function {
         } catch (Exception e) {
             throw new RockException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "<" + getClass().getSimpleName() + ":" + method.toString() + ">";
     }
 }

@@ -1,7 +1,7 @@
 package rock.ast;
 
 import rock.Environment;
-import rock.RockException;
+import rock.exception.RockException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

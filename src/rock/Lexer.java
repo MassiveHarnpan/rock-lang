@@ -1,5 +1,6 @@
 package rock;
 
+import rock.exception.RockException;
 import rock.token.*;
 
 import java.io.IOException;

@@ -1,27 +1,23 @@
 package rock;
 
+import rock.exception.RockException;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class RockObject {
+public class RockObject extends Environment {
 
     private RockClass clazz;
 
-    public RockObject(RockClass clazz) {
+    public RockObject(RockClass clazz, Environment outer) {
+        super(outer);
         this.clazz = clazz;
     }
 
-    private Map<String, Object> pool = new HashMap<>();
-
-
-    public Object get(String name) {
-        return pool.get(name);
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<object:").append(" instanceof ").append(clazz.name());
+        return sb.append(">").toString();
     }
-
-    public Object set(String name, Object obj) {
-        pool.put(name, obj);
-        return obj;
-    }
-
-
 }
