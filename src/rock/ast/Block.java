@@ -1,6 +1,7 @@
 package rock.ast;
 
 import rock.data.Environment;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.exception.RockException;
 

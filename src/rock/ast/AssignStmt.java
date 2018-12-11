@@ -1,11 +1,8 @@
 package rock.ast;
 
-import rock.data.Environment;
-import rock.data.Rock;
-import rock.data.RockObject;
+import rock.data.*;
 import rock.exception.RockException;
 import rock.exception.UnsupportedASTException;
-import rock.exception.UnsupportedOperationException;
 import rock.util.Logger;
 
 public class AssignStmt extends ASTList {
@@ -32,7 +29,7 @@ public class AssignStmt extends ASTList {
 
 
         if (dest instanceof Name || dest instanceof Primary) {
-            Rock name = dest.eval(env);
+            Proxy name = dest.proxy(env, null);
             name.set(val);
             return val;
         } else {

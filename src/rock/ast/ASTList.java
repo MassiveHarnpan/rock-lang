@@ -1,8 +1,8 @@
 package rock.ast;
 
-import rock.data.Rock;
-import rock.data.Environment;
+import rock.data.*;
 import rock.exception.RockException;
+import rock.exception.UnsupportedOperationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +42,8 @@ public class ASTList extends ASTree {
     }
 
     @Override
-    public Rock eval(Environment env, Rock base) throws RockException {
-        return eval(env);
+    public Proxy proxy(Environment env, Rock base) throws RockException {
+        throw new UnsupportedOperationException("proxy", this.toString());
     }
 
     @Override

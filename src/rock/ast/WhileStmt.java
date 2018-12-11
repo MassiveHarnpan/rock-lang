@@ -1,7 +1,10 @@
 package rock.ast;
 
 import rock.data.Environment;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
+import rock.data.internal.RockFunction;
+import rock.data.internal.RockInteger;
 import rock.exception.RockException;
 
 public class WhileStmt extends ASTList {
@@ -26,7 +29,7 @@ public class WhileStmt extends ASTList {
         ASTree cond =  condition();
         ASTree body = body();
         Rock result = null;
-        while (!Integer.valueOf(0).equals(cond.eval(env))) {
+        while (!RockInteger.FALSE.equals(cond.eval(env))) {
             result = body.eval(env);
         }
         return result;

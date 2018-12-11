@@ -35,8 +35,8 @@
       </TilePane>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button mnemonicParsing="false" onAction="#run" text="Run" />
-            <Button mnemonicParsing="false" onAction="#stop" text="Stop" />
+          <Button mnemonicParsing="false" onAction="#run" text="Run(Ctrl+SPACE)" />
+            <Button mnemonicParsing="false" onAction="#stop" text="Stop(Ctrl+Q)" />
             <Button mnemonicParsing="false" onAction="#clearCode" text="Clear Code" />
             <Button mnemonicParsing="false" onAction="#clearConsole" text="Clear Console" />
         </items>

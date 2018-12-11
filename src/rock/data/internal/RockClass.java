@@ -1,9 +1,13 @@
-package rock.data;
+package rock.data.internal;
 
+import rock.data.Environment;
+import rock.data.Evaluator;
+import rock.data.NestedEnvironment;
+import rock.data.Rock;
 import rock.exception.RockException;
 import rock.util.Logger;
 
-public class RockClass extends Rock {
+public class RockClass extends RockAdapter {
 
     private String name;
     private RockClass superClass;
@@ -34,6 +38,9 @@ public class RockClass extends Rock {
     }
 
 
+
+
+
     public void initObject(RockObject ro) throws RockException {
         if (superClass != null) {
             superClass.initObject(ro);
@@ -41,10 +48,17 @@ public class RockClass extends Rock {
         body.eval(ro.env());
     }
 
+
+
+
+
     @Override
-    public Rock get(String key) throws RockException {
+    public Rock get(Object key) throws RockException {
+        if (!(key instanceof String)) {
+            throw new RockException("constructor's name must be a string");
+        }
         Logger.log("create new constructor: " + name + "." + key);
-        return new RockConstructor(this, key);
+        return new RockConstructor(this, (String) key);
     }
 
     @Override

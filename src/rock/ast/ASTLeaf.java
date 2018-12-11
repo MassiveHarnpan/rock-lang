@@ -1,8 +1,13 @@
 package rock.ast;
 
 import rock.data.*;
+import rock.data.internal.RockDecimal;
+import rock.data.internal.RockInteger;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.exception.UnsupportedOperationException;
 import rock.token.Token;
+import rock.util.Logger;
 
 public class ASTLeaf extends ASTree {
     @Override
@@ -23,21 +28,23 @@ public class ASTLeaf extends ASTree {
     @Override
     public Rock eval(Environment env) throws RockException {
         Object value = token.value();
+        Logger.log(value + " instanceof "+value.getClass().getSimpleName());
         if (value instanceof Integer) {
-            return new RockInt((Integer) value);
+            return new RockInteger((Integer) value);
         } else if (value instanceof Double) {
-            return new RockDec((Double) value);
+            return new RockDecimal((Double) value);
         } else if (value instanceof String) {
-            return new RockStr((String) value);
+            return new RockString((String) value);
         } else {
             return null;
         }
     }
 
     @Override
-    public Rock eval(Environment env, Rock base) throws RockException {
-        return eval(env);
+    public Proxy proxy(Environment env, Rock base) throws RockException {
+        return new InstanceProxy(eval(env));
     }
+
 
     private Token token;
 

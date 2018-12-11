@@ -1,10 +1,9 @@
 package rock.ast;
 
 import rock.data.Environment;
-import rock.data.Function;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.exception.RockException;
-import rock.exception.UnsupportedOperationException;
 import rock.util.Logger;
 
 import java.util.Arrays;

@@ -1,18 +1,15 @@
 package sample;
 
 import rock.Lexer;
-import rock.data.*;
-import rock.exception.RockException;
 import rock.ast.ASTree;
+import rock.data.NestedEnvironment;
+import rock.data.Rock;
+import rock.exception.RockException;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
-import rock.runtime.NativeEvaluator;
-import rock.runtime.NativeFunction;
-import rock.util.Logger;
+import rock.runtime.BasicRuntimeEnvironment;
 
 import java.io.*;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class ConsoleMain {
 
@@ -60,72 +57,20 @@ public class ConsoleMain {
             return false;
         }
         Rock r = ast.eval(runtime);
-        String rst;
-        if (r == null) {
-            rst = "<>";
-        } else {
-            rst = String.valueOf(r instanceof  RockLiteral ? ((RockLiteral) r).get() : r);
-        }
+        String rst = (r == null) ? "<>" : r.toString();
         System.out.println("=>  " + rst);
         return true;
     }
 
-    static Environment runtime = new Environment();
+    static NestedEnvironment runtime = new NestedEnvironment();
 
     public static void init() {
         try {
             reader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-
-            Function currentTimeMillis = new NativeFunction("currentTimeMillis", System.class.getDeclaredMethod("currentTimeMillis"));
-            runtime.set("currentTimeMillis", currentTimeMillis);
-
-            runtime.set("print", new Function("print", new String[]{"msg"}, new NativeEvaluator() {
-                @Override
-                public Rock eval(Environment env) throws RockException {
-                    System.out.println(String.valueOf(env.get("msg")));
-                    return null;
-                }
-            }, runtime));
-            runtime.set("println", new Function("println", new String[] {"msg"}, new NativeEvaluator() {
-                @Override
-                public Rock eval(Environment env) throws RockException {
-                    System.out.println("\n" + String.valueOf(env.get("msg")));
-                    return null;
-                }
-            }, runtime));
-            runtime.set("ln", new Function("ln", new String[] {}, new NativeEvaluator() {
-                @Override
-                public Rock eval(Environment env) throws RockException {
-                    System.out.println("\n");
-                    return null;
-                }
-            }, runtime));
-            runtime.set("show_log", new Function("show_log", new String[] {"stat"}, new NativeEvaluator() {
-                @Override
-                public Rock eval(Environment env) throws RockException {
-                    Rock r = env.get("stat");
-                    boolean show = false;
-                    if (r == null || Integer.valueOf(0).equals(r.get())) {
-                        show = false;
-                    } else {
-                        show = true;
-                    }
-                    Logger.setShow(show);
-                    return null;
-                }
-            }, runtime));
-            runtime.set("exit", new Function("exit", new String[0], new NativeEvaluator() {
-                @Override
-                public Rock eval(Environment env) throws RockException {
-                    System.exit(0);
-                    return null;
-                }
-            }, runtime));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        runtime = new BasicRuntimeEnvironment();
     }
 
 }

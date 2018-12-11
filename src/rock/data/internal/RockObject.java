@@ -1,9 +1,11 @@
-package rock.data;
+package rock.data.internal;
 
+import rock.data.Environment;
+import rock.data.NestedEnvironment;
+import rock.data.Rock;
 import rock.exception.RockException;
-import rock.util.Logger;
 
-public class RockObject extends Rock {
+public class RockObject extends RockAdapter {
 
     public static final String INVOKE = "__invoke__";
     public static final String GET = "__get__";
@@ -11,33 +13,28 @@ public class RockObject extends Rock {
     public static final String COMPUTE = "__compute__";
 
     private RockClass clazz;
-    private Environment env;
+    private NestedEnvironment env;
 
     public RockObject(RockClass clazz, Environment outer) {
         this.clazz = clazz;
-        env = new Environment(outer);
+        env = new NestedEnvironment(outer);
     }
 
     @Override
-    public Object get() throws RockException {
-        return this;
-    }
-
-    @Override
-    public Rock get(String key) throws RockException {
-        Rock func = env.get(GET);
+    public Rock get(Object key) throws RockException {
+        /*Rock func = env.get(GET);
         if (func != null) {
-            return func.invoke(new RockStr(key));
-        }
+            return func.invoke(new RockString(String.valueOf(key)));
+        }*/
         return env.get(key);
     }
 
     @Override
-    public Rock set(String key, Rock val) throws RockException {
-        Rock func = env.get(SET);
+    public Rock set(Object key, Rock val) throws RockException {
+        /*Rock func = env.get(SET);
         if (func != null) {
-            return func.invoke(new RockStr(key), val);
-        }
+            return func.invoke(new RockString(String.valueOf(key)), val);
+        }*/
         return env.set(key, val);
     }
 
@@ -45,7 +42,7 @@ public class RockObject extends Rock {
     public Rock compute(String op, Rock another) throws RockException {
         Rock func = env.get(COMPUTE);
         if (func != null) {
-            return func.invoke(new RockStr(op), another);
+            return func.invoke(new RockString(op), another);
         }
         return super.compute(op, another);
     }
@@ -60,7 +57,7 @@ public class RockObject extends Rock {
     }
 
     @Override
-    public Environment env() throws RockException {
+    public NestedEnvironment env() throws RockException {
         return env;
     }
 

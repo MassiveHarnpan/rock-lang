@@ -1,10 +1,7 @@
 package rock.ast;
 
-import rock.data.Rock;
-import rock.data.Environment;
-import rock.data.Function;
+import rock.data.*;
 import rock.exception.RockException;
-import rock.exception.UnsupportedOperationException;
 
 public class Arguments extends ASTList {
 
@@ -13,12 +10,12 @@ public class Arguments extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env, Rock base) throws RockException {
+    public Proxy proxy(Environment env, Rock base) throws RockException {
         Rock[] args = new Rock[childCount()];
         for (int i = 0; i < childCount(); i++) {
             args[i] = child(i).eval(env);
         }
-        return base.invoke(args);
+        return new InstanceProxy(base.invoke(args));
     }
 
     @Override

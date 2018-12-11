@@ -1,9 +1,10 @@
 package rock.data;
 
+import rock.data.internal.RockType;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 
-public class Rock implements GetterAndSetter {
+public abstract class Rock implements Environment {
 
 
     public Rock invoke(Rock... args) throws RockException {
@@ -11,35 +12,27 @@ public class Rock implements GetterAndSetter {
     }
 
     public Rock get(Rock key) throws RockException {
-        throw new UnsupportedOperationException("get", this.toString());
+        if (key == null) {
+            return null;
+        }
+        if (key.hasJavaPrototype()) {
+            return get(key.getJavaPrototype());
+        }
+        return get((Object) key);
     }
 
-    @Override
-    public Rock get(String key) throws RockException {
-        throw new UnsupportedOperationException("get", this.toString(), key);
-    }
+    public abstract boolean support(String op, Rock another);
 
-    public Object get() throws RockException {
-        throw new UnsupportedOperationException("get", this.toString());
-    }
+    public abstract Rock compute(String op, Rock another) throws RockException;
 
-    @Override
-    public Rock set(String key, Rock val) throws RockException {
-        throw new UnsupportedOperationException("set", this.toString(), key, val.toString());
-    }
+    public abstract Environment env() throws RockException;
 
-    public Rock set(Rock val) throws RockException {
-        throw new UnsupportedOperationException("set", this.toString());
-    }
+    public abstract RockType type();
 
 
-    public Rock compute(String op, Rock another) throws RockException {
-        throw new UnsupportedOperationException("operate", this.toString());
-    }
 
-    public Environment env() throws RockException {
-        throw new UnsupportedOperationException("env", this.toString());
-    }
+    public abstract boolean hasJavaPrototype();
 
+    public abstract Object getJavaPrototype();
 
 }

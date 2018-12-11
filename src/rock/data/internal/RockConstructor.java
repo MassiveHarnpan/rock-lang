@@ -1,8 +1,15 @@
-package rock.data;
+package rock.data.internal;
 
+import rock.data.Environment;
+import rock.data.NestedEnvironment;
+import rock.data.Rock;
+import rock.data.internal.RockClass;
+import rock.data.internal.RockObject;
 import rock.exception.RockException;
 
-public class RockConstructor extends Rock {
+import java.util.Set;
+
+public class RockConstructor extends RockAdapter {
 
     private RockClass clazz;
     private String name;
@@ -27,6 +34,21 @@ public class RockConstructor extends Rock {
     @Override
     public Environment env() throws RockException {
         return clazz.env();
+    }
+
+    @Override
+    public RockType type() {
+        return RockType.CON;
+    }
+
+    @Override
+    public Rock get(Object key) throws RockException {
+        return null;
+    }
+
+    @Override
+    public Rock set(Object key, Rock val) throws RockException {
+        return null;
     }
 
     @Override

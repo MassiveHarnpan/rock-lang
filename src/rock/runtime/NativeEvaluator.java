@@ -1,8 +1,6 @@
 package rock.runtime;
 
-import rock.data.Environment;
-import rock.data.Evaluator;
-import rock.data.Rock;
+import rock.data.*;
 import rock.exception.RockException;
 
 public class NativeEvaluator implements Evaluator {
@@ -13,7 +11,7 @@ public class NativeEvaluator implements Evaluator {
     }
 
     @Override
-    public Rock eval(Environment env, Rock base) throws RockException {
+    public Proxy proxy(Environment env, Rock base) throws RockException {
         return null;
     }
 

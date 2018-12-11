@@ -1,8 +1,9 @@
-package rock.data;
+package rock.data.internal;
 
+import rock.data.Rock;
 import rock.exception.RockException;
 
-public class RockLiteral extends Rock {
+public class RockLiteral extends RockAdapter {
 
     private Object value;
 
@@ -11,7 +12,12 @@ public class RockLiteral extends Rock {
     }
 
     @Override
-    public Object get() throws RockException {
+    public boolean hasJavaPrototype() {
+        return true;
+    }
+
+    @Override
+    public Object getJavaPrototype() {
         return value;
     }
 

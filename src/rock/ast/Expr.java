@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
+import rock.exception.UnsupportedOperationException;
 import rock.util.Logger;
 
 import java.util.Iterator;
@@ -17,8 +18,8 @@ public class Expr extends ASTList {
     @Override
     public Rock eval(Environment env) throws RockException {
         Rock leftVal = child(0).eval(env);
+        Logger.log("leftVal = " + leftVal);
         if (childCount() == 1) {
-            Logger.log(leftVal + " = " + leftVal);
             return leftVal;
         }
         int index = 1;
@@ -26,6 +27,9 @@ public class Expr extends ASTList {
         while (index < childCount() - 1) {
             String operator = ((ASTLeaf) child(index++)).token().literal();
             Rock rightVal = child(index++).eval(env);
+            if (!leftVal.support(operator, rightVal)) {
+                throw new UnsupportedOperationException(operator, leftVal.toString(), rightVal.toString());
+            }
             msg = leftVal + " " + operator + " " + rightVal + " = ";
             leftVal = leftVal.compute(operator, rightVal);
             Logger.log(msg + leftVal);

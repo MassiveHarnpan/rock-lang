@@ -4,17 +4,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
-import rock.*;
+import rock.Lexer;
 import rock.ast.ASTree;
 import rock.data.Environment;
-import rock.data.Function;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
-import rock.data.RockName;
+import rock.data.internal.RockFunction;
 import rock.exception.RockException;
 import rock.parser.BasicParser;
 import rock.parser.Parser;
+import rock.runtime.BasicRuntimeEnvironment;
 import rock.runtime.NativeEvaluator;
-import rock.runtime.NativeFunction;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -34,42 +34,41 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        try {
-            //Function println = new NativeFunction("println", System.out, System.out.getClass().getDeclaredMethod("println", Object.class));
-            //runtime.put(println.name(), println);
-            //Function print = new NativeFunction("print", System.out, System.out.getClass().getDeclaredMethod("print", Object.class));
-            //runtime.put(print.name(), print);
-            Function currentTimeMillis = new NativeFunction("currentTimeMillis", System.class.getDeclaredMethod("currentTimeMillis"));
-            runtime.set("currentTimeMillis", currentTimeMillis);
+        //Function println = new NativeFunction("println", System.out, System.out.getClass().getDeclaredMethod("println", Object.class));
+        //runtime.put(println.name(), println);
+        //Function print = new NativeFunction("print", System.out, System.out.getClass().getDeclaredMethod("print", Object.class));
+        //runtime.put(print.name(), print);
+        runtime = new BasicRuntimeEnvironment();
 
-            runtime.set("print", new Function("print", new String[]{"msg"}, new NativeEvaluator() {
+        try {
+            runtime.set("print", new RockFunction("print", new String[]{"msg"}, new NativeEvaluator() {
                 @Override
                 public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText(String.valueOf(env.get("msg")));
                     return null;
                 }
             }, runtime));
-            runtime.set("println", new Function("print", new String[] {"msg"}, new NativeEvaluator() {
+            runtime.set("println", new RockFunction("print", new String[]{"msg"}, new NativeEvaluator() {
                 @Override
                 public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
                     return null;
                 }
             }, runtime));
-            runtime.set("ln", new Function("print", new String[] {}, new NativeEvaluator() {
+            runtime.set("ln", new RockFunction("print", new String[]{}, new NativeEvaluator() {
                 @Override
                 public Rock eval(Environment env) throws RockException {
                     tarConsole.appendText("\n");
                     return null;
                 }
             }, runtime));
-        } catch (NoSuchMethodException e) {
+        } catch (RockException e) {
             e.printStackTrace();
         }
     }
 
     private Parser parser = new BasicParser();
-    private Environment runtime = new Environment();
+    private Environment runtime;
     @FXML
     public void run(){
         System.out.println("Code runs");
@@ -86,8 +85,8 @@ public class Controller implements Initializable {
                 outputParseResult(ast, 0);
             }
             tarParser.appendText("\n------------------------\n");
-            Rock r = ast.eval(new Environment(runtime));
-            String rst = String.valueOf(r == null ? "<>" : r.get());
+            Rock r = ast.eval(new NestedEnvironment(runtime));
+            String rst = String.valueOf(r == null ? "<>" : r.toString());
             tarConsole.appendText("\n=> " + rst);
         } catch (RockException e) {
             e.printStackTrace();
@@ -131,7 +130,7 @@ public class Controller implements Initializable {
         if (event.isControlDown()) {
             switch (event.getCode()) {
                 case SPACE: run(); break;
-                case C: stop(); break;
+                case Q: stop(); break;
             }
         }
     }

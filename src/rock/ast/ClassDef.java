@@ -1,8 +1,9 @@
 package rock.ast;
 
 import rock.data.Environment;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
-import rock.data.RockClass;
+import rock.data.internal.RockClass;
 import rock.exception.RockException;
 
 public class ClassDef extends ASTList {

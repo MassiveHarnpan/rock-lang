@@ -1,12 +1,14 @@
 package rock.runtime;
 
-import rock.data.Function;
+import rock.data.internal.*;
 import rock.data.Rock;
 import rock.exception.RockException;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-public class NativeFunction extends Function {
+public class NativeFunction extends RockFunction {
 
     private Object obj;
     private Method method;
@@ -37,11 +39,30 @@ public class NativeFunction extends Function {
         }
         Object[] argarr = new Object[args.length];
         for (int i = 0; i < argarr.length; i++) {
-            argarr[i] = args[i].get();
+            argarr[i] = args[i].hasJavaPrototype() ? args[i].getJavaPrototype() : args[i];
         }
         try {
             Object r = method.invoke(obj, argarr);
-            return r == null ? null : new Rock();
+            if (r == null) {
+                return RockNil.INSTANCE;
+            }
+            if (r instanceof Rock) {
+                return (Rock) r;
+            }
+            if (r instanceof Byte || r instanceof Short ||r instanceof Integer || r instanceof Long || r instanceof BigInteger) {
+                return new RockInteger(((Number) r).intValue());
+            }
+            if (r instanceof Float || r instanceof Double || r instanceof BigDecimal) {
+                return new RockDecimal(((Number) r).doubleValue());
+            }
+            if (r instanceof Boolean) {
+                boolean b = (boolean) r;
+                return b ? RockInteger.TRUE : RockInteger.FALSE;
+            }
+            if (r instanceof String) {
+                return new RockString((String) r);
+            }
+            return new RockNative(r);
         } catch (Exception e) {
             throw new RockException(e);
         }
@@ -49,6 +70,6 @@ public class NativeFunction extends Function {
 
     @Override
     public String toString() {
-        return "<" + getClass().getSimpleName() + ":" + method.toString() + ">";
+        return "<native-function:" + method.toString() + ">";
     }
 }

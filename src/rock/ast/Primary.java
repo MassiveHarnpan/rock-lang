@@ -1,8 +1,8 @@
 package rock.ast;
 
-import rock.data.Environment;
-import rock.data.Rock;
+import rock.data.*;
 import rock.exception.RockException;
+import rock.exception.UnsupportedOperationException;
 
 import java.util.Iterator;
 
@@ -31,11 +31,29 @@ public class Primary extends ASTList {
         return evalSub(env, 0);
     }
 
+    @Override
+    public Proxy proxy(Environment env, Rock base) throws RockException {
+        Environment b = env;
+        if (base != null) {
+            b = base;
+        }
+        if (postfixCount() == 0) {
+            ASTree basic = basic();
+            if (!(basic instanceof Name)) {
+                throw new UnsupportedOperationException("proxy", this.toString(), basic.toString());
+            }
+            return new EnvProxy(b, ((Name) basic).name());
+        }
+        ASTree last = postfix(0);
+        Rock rock = evalSub(b,1);
+        return last.proxy(env, rock);
+    }
+
     public Rock evalSub(Environment env, int nest) throws RockException {
         if (nest < postfixCount()) {
             Rock base = evalSub(env, nest + 1);
             ASTree postfix = postfix(nest);
-            return postfix.eval(env, base);
+            return postfix.proxy(env, base).get();
         } else {
             return basic().eval(env);
         }
