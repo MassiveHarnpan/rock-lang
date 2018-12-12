@@ -41,7 +41,7 @@ public class Simple extends ASTList {
         sb.append(RockString.repeat(indent, space)).append("# ").append(expr());
         ASTree args = args();
         for (int i = 0; i < args.childCount(); i++) {
-            sb.append(" ").append(child(i).toString());
+            sb.append(" ").append(args.child(i).toString());
         }
         return sb.toString();
     }

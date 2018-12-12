@@ -41,6 +41,7 @@ public class BasicParser extends NonTerminalParser {
         ASTParser simple = ast();
         ASTParser funcDef = ast();
         ASTParser closure = ast();
+        ASTParser lambda = ast();
         ASTParser ifStmt = ast();
         ASTParser whileStmt = ast();
         ForkParser classStmt = fork();
@@ -67,7 +68,7 @@ public class BasicParser extends NonTerminalParser {
         program.then(maybe(progStmt), repeat(seq(eos, maybe(progStmt)))).named("program");
         progStmt.or(funcDef, classDef, stmt).named("progStmt");
         block.of(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(eos, maybe(stmt))), sep("}"))).named("block");
-        stmt.or(ifStmt, whileStmt, asgnStmt, closure, simple, expr).named("stmt");
+        stmt.or(ifStmt, whileStmt, asgnStmt, closure, lambda, simple, expr).named("stmt");
         asgnStmt.of(seq(AssignStmt.class).then(primary, sep("="), stmt)).named("asgnStmt");
 
         paramList.of(ast(seq(ASTList.class).then(name, repeat(seq(sep(","), name))))).named("paramList");
@@ -76,6 +77,7 @@ public class BasicParser extends NonTerminalParser {
 
 
         closure.of(seq(Closure.class).then(sep("fun"), sep("("), paramList, sep(")"), block)).named("closure");
+        lambda.of(seq(Lambda.class).then(fork(seq(sep("("), paramList, sep(")")), ast(seq(name))), sep("->"), fork(block, stmt))).named("lambda");
 
         simple.of(seq(Simple.class).then(sep("#"), primary, ast(repeat(stmt))).named("simple"));
 

@@ -39,6 +39,20 @@ public class Block extends ASTList {
     }
 
     @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("{");
+        Iterator<ASTree> itr = children.iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next().toString());
+            if (itr.hasNext()) {
+                sb.append("; ");
+            }
+        }
+        return sb.append('}').toString();
+    }
+
+    @Override
     public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
         sb.append("{\n");
