@@ -6,26 +6,26 @@ public class EnvProxy implements Proxy {
 
 
     private Environment env;
-    private String name;
+    private Object key;
 
-    public EnvProxy(Environment env, String name) {
+    public EnvProxy(Environment env, Object key) {
         this.env = env;
-        this.name = name;
+        this.key = key;
     }
 
     @Override
     public Rock get() throws RockException {
-        return env.get(name);
+        return env.get(key);
     }
 
     @Override
     public Rock set(Rock val) throws RockException {
-        return env.set(name, val);
+        return env.set(key, val);
     }
 
 
-    public String name() {
-        return name;
+    public Object key() {
+        return key;
     }
 
     public Environment env() {

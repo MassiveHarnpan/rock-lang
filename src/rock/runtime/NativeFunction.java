@@ -7,6 +7,7 @@ import rock.exception.RockException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 public class NativeFunction extends RockFunction {
 
@@ -61,6 +62,10 @@ public class NativeFunction extends RockFunction {
             }
             if (r instanceof String) {
                 return new RockString((String) r);
+            }
+            if (r instanceof List) {
+                List<Rock> list = (List<Rock>) r;
+                return new RockArray(list.toArray(new Rock[list.size()]));
             }
             return new RockNative(r);
         } catch (Exception e) {

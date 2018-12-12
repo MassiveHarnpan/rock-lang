@@ -39,6 +39,9 @@ public class Expr extends ASTList {
 
     @Override
     public String toString() {
+        if (childCount() == 1) {
+            return child(0).toString();
+        }
         StringBuffer sb = new StringBuffer();
         sb.append("(");
         Iterator<ASTree> itr = iterator();

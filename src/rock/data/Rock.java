@@ -33,6 +33,8 @@ public abstract class Rock implements Environment {
 
     public abstract boolean hasJavaPrototype();
 
-    public abstract Object getJavaPrototype();
+    public Object getJavaPrototype() {
+        return this;
+    }
 
 }

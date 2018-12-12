@@ -45,13 +45,15 @@ public class BasicParser extends NonTerminalParser {
         ForkParser classStmt = fork();
         ASTParser classBlock = ast();
         ASTParser classDef = ast();
+        ASTParser array = ast();
 
 
 
         arguments.of(seq(Arguments.class).then(sep("("), maybe(seq(stmt, repeat(seq(sep(","), stmt)))), sep(")"))).named("arguments");
+        index.of(seq(Index.class).then(sep("["), factor, sep("]"))).named("index");
         dot.of(seq(Dot.class).then(sep("."), name)).named("dot");
-        postfix.or(arguments, dot).named("postfix");
-        basic.or(seq(sep("("), stmt, sep(")")), number, name, string).named("basic");
+        postfix.or(arguments, dot, index).named("postfix");
+        basic.or(seq(sep("("), stmt, sep(")")), number, name, string, array).named("basic");
         primary.of(seq(Primary.class).then(basic, repeat(postfix))).named("primary");
         factor.or(ast(seq(Negative.class).then(sep("-"), primary)), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
@@ -74,7 +76,7 @@ public class BasicParser extends NonTerminalParser {
 
         closure.of(seq(Closure.class).then(sep("fun"), sep("("), paramList, sep(")"), block)).named("closure");
 
-        simple.of(seq(Simple.class).then(sep("#"), name, ast(repeat(stmt))).named("simple"));
+        simple.of(seq(Simple.class).then(sep("#"), primary, ast(repeat(stmt))).named("simple"));
 
 
         ifStmt.of(seq(IfStmt.class).then(sep("if"), stmt, block, maybe(seq(sep("else"), block)))).named("ifStmt");
@@ -84,6 +86,8 @@ public class BasicParser extends NonTerminalParser {
         classStmt.or(funcDef, asgnStmt).named("classStmt");
         classBlock.of(seq(Block.class).then(sep("{"), maybe(classStmt), repeat(seq(eos, maybe(classStmt))), sep("}"))).named("classBlock");
         classDef.of(seq(ClassDef.class).then(sep("class"), name, maybe(seq(sep("extends"), name)), classBlock)).named("classDef");
+
+        array.of(seq(Array.class).then(sep("["), maybe(seq(expr, repeat(seq(sep(","), expr)))), sep("]"))).named("array");
 
         this.program = program;
     }
