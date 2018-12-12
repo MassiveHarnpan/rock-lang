@@ -5,6 +5,7 @@ import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockFunction;
 import rock.data.internal.RockInteger;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 
 public class WhileStmt extends ASTList {
@@ -36,7 +37,7 @@ public class WhileStmt extends ASTList {
     }
 
     @Override
-    public String toString() {
-        return "while " + condition() + " " + body();
+    public String toString(int indent, String space) {
+        return RockString.repeat(indent, space) + "while " + condition() + " " + body().toString(indent, space);
     }
 }

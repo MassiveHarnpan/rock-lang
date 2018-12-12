@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.data.internal.RockInteger;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 
 public class IfStmt extends ASTList {
@@ -35,11 +36,11 @@ public class IfStmt extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
-        sb.append("if ").append(condition()).append(" ").append(thenBlock());
+        sb.append(RockString.repeat(indent, space)).append("if ").append(condition()).append(" ").append(thenBlock().toString(indent, space));
         if (childCount() > 2) {
-            sb.append(" else ").append(elseBlock());
+            sb.append(" else ").append(elseBlock().toString(indent, space));
         }
         return sb.toString();
     }

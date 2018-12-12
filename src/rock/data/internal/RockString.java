@@ -43,6 +43,11 @@ public class RockString extends RockLiteral {
     public static String repeat(int times, String s) {
         if (times < 0) {
             s = new StringBuffer().append(s).reverse().toString();
+            times = -times;
+        }
+        switch (times) {
+            case 0: return "";
+            case 1: return s;
         }
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < times; i++) {

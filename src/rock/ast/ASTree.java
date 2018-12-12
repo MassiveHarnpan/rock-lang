@@ -20,6 +20,6 @@ public abstract class ASTree implements Evaluator {
     }
 
     public String toString(int indent, String space) {
-        return RockString.repeat(indent, space) + toString();
+        return RockString.repeat(indent, space) + this.toString();
     }
 }

@@ -15,6 +15,7 @@ import rock.parser.BasicParser;
 import rock.parser.Parser;
 import rock.runtime.BasicRuntimeEnvironment;
 import rock.runtime.NativeEvaluator;
+import rock.util.Logger;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -77,10 +78,11 @@ public class Controller implements Initializable {
         try {
             ASTree ast = parser.parse(lexer);
             if (ast == null) {
-                tarParser.setText("#Failed\n");
+                tarParser.setText(">>> Failed\n");
             } else {
                 ast = ast.simplify();
-                tarParser.setText("#Succeed\n");
+                tarParser.setText(">>> Succeed\n");
+                Logger.log("AST result = " + ast.getClass().getSimpleName());
                 tarParser.appendText(ast.toString()/*.replace("\n", "#EOF")*/+'\n');
                 outputParseResult(ast, 0);
             }

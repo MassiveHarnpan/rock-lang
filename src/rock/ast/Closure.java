@@ -33,7 +33,7 @@ public class Closure extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
         sb.append("fun ").append("(");
         String[] params = params();
@@ -43,6 +43,6 @@ public class Closure extends ASTList {
                 sb.append(", ").append(params[i]);
             }
         }
-        return sb.append(") ").append(body().toString()).toString();
+        return sb.append(") ").append(body().toString(indent, space)).toString();
     }
 }

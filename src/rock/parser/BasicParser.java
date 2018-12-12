@@ -1,6 +1,7 @@
 package rock.parser;
 
 import rock.Lexer;
+import rock.data.Proxy;
 import rock.exception.RockException;
 import rock.ast.*;
 import rock.token.*;
@@ -13,7 +14,7 @@ public class BasicParser extends NonTerminalParser {
     
 
     public BasicParser() {
-        super(Block.class);
+        super(Program.class);
         Parser string = str().named("string");
         Parser number = num().named("number");
         Parser name = name().named("name");
@@ -23,7 +24,7 @@ public class BasicParser extends NonTerminalParser {
         Parser tOperator = id("+", "-").named("tOperator");
         Parser comparator = id("==", "!=", ">", "<", ">=", "<=").named("comparator");
 
-        ASTParser program = ast();
+        SeqParser program = seq(Program.class);
         ForkParser progStmt = fork();
         ASTParser block = ast();
         ForkParser stmt = fork();
@@ -63,7 +64,7 @@ public class BasicParser extends NonTerminalParser {
 
 
 
-        program.of(seq(Program.class).then(maybe(progStmt), repeat(seq(eos, maybe(progStmt))))).named("program");
+        program.then(maybe(progStmt), repeat(seq(eos, maybe(progStmt)))).named("program");
         progStmt.or(funcDef, classDef, stmt).named("progStmt");
         block.of(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(eos, maybe(stmt))), sep("}"))).named("block");
         stmt.or(ifStmt, whileStmt, asgnStmt, closure, simple, expr).named("stmt");
@@ -104,11 +105,7 @@ public class BasicParser extends NonTerminalParser {
     }
 
     public ASTree parse(Lexer lexer) throws RockException {
-        List<ASTree> res = new ArrayList<>();
-        if (program.parse(lexer, res)) {
-            return create(res.toArray(new ASTree[res.size()]));
-        }
-        return null;
+        return program.parse(lexer);
     }
 
 //    @Override

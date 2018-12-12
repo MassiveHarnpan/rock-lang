@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.data.internal.RockFunction;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 import rock.util.Logger;
 
@@ -41,9 +42,9 @@ public class FuncDef extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
-        sb.append("def ").append(name()).append(" (");
+        sb.append(RockString.repeat(indent, space)).append("def ").append(name()).append(" (");
         Iterator<String> itr = params().iterator();
         while (itr.hasNext()) {
             sb.append(itr.next());
@@ -51,7 +52,7 @@ public class FuncDef extends ASTList {
                 sb.append(", ");
             }
         }
-        sb.append(") ").append(body());
+        sb.append(") ").append(body().toString(indent, space));
         return sb.toString();
     }
 }

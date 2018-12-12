@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.NestedEnvironment;
 import rock.data.Rock;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 import rock.util.Logger;
 
@@ -35,15 +36,12 @@ public class Simple extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
-        sb.append("# ").append(expr());
+        sb.append(RockString.repeat(indent, space)).append("# ").append(expr());
         ASTree args = args();
-        if (args.childCount() > 0) {
-            sb.append(args.child(0));
-        }
-        for (int i = 1; i < args.childCount(); i++) {
-            sb.append(" ").append(child(i));
+        for (int i = 0; i < args.childCount(); i++) {
+            sb.append(" ").append(child(i).toString());
         }
         return sb.toString();
     }

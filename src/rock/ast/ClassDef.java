@@ -4,6 +4,7 @@ import rock.data.Environment;
 import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockClass;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 
 public class ClassDef extends ASTList {
@@ -39,13 +40,13 @@ public class ClassDef extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         String s = superClassName();
         if (s == null) {
             s = "";
         } else {
             s = "extends " + s;
         }
-        return "class " + name() + " " + s + " " + body();
+        return RockString.repeat(indent, space) + "class " + name() + " " + s + " " + body().toString(indent, space);
     }
 }

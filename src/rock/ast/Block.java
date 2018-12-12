@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.NestedEnvironment;
 import rock.data.Rock;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
 
 import java.util.Iterator;
@@ -38,14 +39,14 @@ public class Block extends ASTList {
     }
 
     @Override
-    public String toString() {
+    public String toString(int indent, String space) {
         StringBuffer sb = new StringBuffer();
-        sb.append('{').append("\n");
+        sb.append("{\n");
         Iterator<ASTree> itr = children.iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next().toString(1, "    "));
+            sb.append(itr.next().toString(indent + 1, space));
             sb.append('\n');
         }
-        return sb.append('}').toString();
+        return sb.append(RockString.repeat(indent, space)).append('}').toString();
     }
 }
