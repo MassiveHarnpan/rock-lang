@@ -1,6 +1,7 @@
 package rock.ast;
 
 import rock.data.Evaluator;
+import rock.data.internal.RockString;
 
 public abstract class ASTree implements Evaluator {
 
@@ -16,5 +17,9 @@ public abstract class ASTree implements Evaluator {
     @Override
     public String toString() {
         return "("+getClass().getSimpleName()+")";
+    }
+
+    public String toString(int indent, String space) {
+        return RockString.repeat(indent, space) + toString();
     }
 }

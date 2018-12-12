@@ -63,7 +63,7 @@ public class BasicParser extends NonTerminalParser {
 
 
 
-        program.of(seq(Block.class).then(maybe(progStmt), repeat(seq(eos, maybe(progStmt))))).named("program");
+        program.of(seq(Program.class).then(maybe(progStmt), repeat(seq(eos, maybe(progStmt))))).named("program");
         progStmt.or(funcDef, classDef, stmt).named("progStmt");
         block.of(seq(Block.class).then(sep("{"), maybe(stmt), repeat(seq(eos, maybe(stmt))), sep("}"))).named("block");
         stmt.or(ifStmt, whileStmt, asgnStmt, closure, simple, expr).named("stmt");

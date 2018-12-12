@@ -8,6 +8,7 @@ import rock.exception.RockException;
 public class RockObject extends RockAdapter {
 
     public static final String INVOKE = "__invoke__";
+    public static final String NEW = "__new__";
     public static final String GET = "__get__";
     public static final String SET = "__set__";
     public static final String COMPUTE = "__compute__";

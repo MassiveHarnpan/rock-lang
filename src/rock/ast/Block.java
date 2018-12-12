@@ -11,7 +11,6 @@ public class Block extends ASTList {
 
     public Block(ASTree... children) {
         super(children);
-        liftSingleElement(true);
     }
 
     @Override
@@ -25,22 +24,17 @@ public class Block extends ASTList {
 
     @Override
     public ASTree simplify() {
-        ASTree tree = super.simplify();
-        if (tree.isLeaf()) {
-            return tree;
+        for (int i = 0; i < childCount(); i++) {
+            children.set(i, children.get(i).simplify());
         }
-        ASTList asl = (ASTList) tree;
-        Iterator<ASTree> itr = asl.iterator();
+        Iterator<ASTree> itr = iterator();
         while (itr.hasNext()) {
             ASTree ast = itr.next();
             if (!ast.isLeaf() && ast.childCount() == 0) {
                 itr.remove();
             }
         }
-        if (asl.childCount() == 1) {
-            return asl.child(0);
-        }
-        return asl;
+        return this;
     }
 
     @Override
@@ -49,7 +43,7 @@ public class Block extends ASTList {
         sb.append('{').append("\n");
         Iterator<ASTree> itr = children.iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next().toString());
+            sb.append(itr.next().toString(1, "    "));
             sb.append('\n');
         }
         return sb.append('}').toString();

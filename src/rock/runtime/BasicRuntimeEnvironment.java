@@ -1,17 +1,32 @@
 package rock.runtime;
 
-import rock.data.Environment;
-import rock.data.NestedEnvironment;
-import rock.data.Rock;
-import rock.data.internal.RockFunction;
-import rock.data.internal.RockInteger;
-import rock.data.internal.RockNil;
+import rock.data.*;
+import rock.data.internal.*;
 import rock.exception.RockException;
 import rock.util.Logger;
 
 public class BasicRuntimeEnvironment extends NestedEnvironment {
 
+    public final RockClass BASIC_ROCK_OBJECT_CLASS;
+
+
+
     public BasicRuntimeEnvironment() {
+
+        BASIC_ROCK_OBJECT_CLASS = new RockClass("Object", null, new NativeEvaluator() {
+            @Override
+            public Rock eval(Environment env) throws RockException {
+                env.set("toString", new RockFunction("toString", new String[0], null, null) {
+                    @Override
+                    public Rock invoke(Rock... args) throws RockException {
+                        return new RockString(env.toString());
+                    }
+                });
+                return null;
+            }
+        }, this);
+
+        this.set(BASIC_ROCK_OBJECT_CLASS.name(), BASIC_ROCK_OBJECT_CLASS);
 
         this.set("false", RockInteger.FALSE);
         this.set("true", RockInteger.TRUE);

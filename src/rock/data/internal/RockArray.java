@@ -75,15 +75,24 @@ public class RockArray extends RockAdapter {
         if (key instanceof Integer) {
             return list.get((Integer) key);
         }
-        return super.get(key);
+        throw new RockException("index must be an integer: " + key);
     }
 
     @Override
     public Rock set(Object key, Rock val) throws RockException {
         if (key instanceof Integer) {
-            return list.set((Integer) key, val);
+            int index = (int) key;
+            if (index < 0 || index > list.size()) {
+                throw new RockException("out of boundary: " + index + " of size " + list.size());
+            }
+            if (index == list.size()) {
+                list.add(val);
+            } else {
+                list.set(index, val);
+            }
+            return val;
         }
-        return super.set(key, val);
+        throw new RockException("index must be an integer: " + key);
     }
 
     @Override

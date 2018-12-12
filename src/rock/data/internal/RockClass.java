@@ -5,6 +5,7 @@ import rock.data.Evaluator;
 import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.exception.RockException;
+import rock.runtime.BasicRuntimeEnvironment;
 import rock.util.Logger;
 
 public class RockClass extends RockAdapter {
@@ -49,8 +50,20 @@ public class RockClass extends RockAdapter {
     }
 
 
-
-
+    @Override
+    public Rock invoke(Rock... args) throws RockException {
+        RockObject ro = new RockObject(this, outer());
+        this.initObject(ro);
+        Rock function = ro.env().get(RockObject.NEW);
+        if (function != null) {
+            function.invoke(args);
+        } else {
+            if (args.length != 0) {
+                throw new RockException("wrong arg count: expect 0, get " + args.length);
+            }
+        }
+        return ro;
+    }
 
     @Override
     public Rock get(Object key) throws RockException {
@@ -70,7 +83,7 @@ public class RockClass extends RockAdapter {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<class:").append(name);
-        if (superClass != null) {
+        if (superClass != null && !"Object".equals(superClass.name)) {
             sb.append(" extends ").append(superClass.name);
         }
         return  sb.append(">").toString();
