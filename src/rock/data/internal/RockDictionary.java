@@ -1,10 +1,18 @@
 package rock.data.internal;
 
+import rock.ast.ASTree;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class RockDictionary extends Rock {
+
+    private Map<Object, Rock> values = new HashMap<>();
+
     @Override
     public Rock member(String mem) throws RockException {
         throw new RockException("cannot get member of a dictionary: "+ toString());
@@ -42,11 +50,29 @@ public class RockDictionary extends Rock {
 
     @Override
     public Rock get(Object key) throws RockException {
-        return null;
+        if (values.containsKey(key)) {
+            return values.get(key);
+        }
+        throw new RockException("Cannot find key: " + key);
     }
 
     @Override
     public Rock set(Object key, Rock val) throws RockException {
-        return null;
+        return values.put(key, val);
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("{");
+        Iterator<Map.Entry<Object, Rock>> itr = values.entrySet().iterator();
+        while (itr.hasNext()) {
+            Map.Entry<Object, Rock> e = itr.next();
+            sb.append(e.getKey()).append(":").append(e.getValue());
+            if (itr.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        return sb.append("}").toString();
     }
 }

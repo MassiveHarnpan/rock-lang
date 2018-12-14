@@ -48,6 +48,8 @@ public class BasicParser extends NonTerminalParser {
         ASTParser classBlock = ast();
         ASTParser classDef = ast();
         ASTParser array = ast();
+        SeqParser pair = seq();
+        ASTParser dictionary = ast();
 
 
 
@@ -55,7 +57,7 @@ public class BasicParser extends NonTerminalParser {
         index.of(seq(Index.class).then(sep("["), factor, sep("]"))).named("index");
         dot.of(seq(Dot.class).then(sep("."), name)).named("dot");
         postfix.or(arguments, dot, index).named("postfix");
-        basic.or(seq(sep("("), stmt, sep(")")), number, name, string, array).named("basic");
+        basic.or(seq(sep("("), stmt, sep(")")), number, name, string, array, dictionary).named("basic");
         primary.of(seq(Primary.class).then(basic, repeat(postfix))).named("primary");
         factor.or(ast(seq(Negative.class).then(sep("-"), primary)), primary).named("factor");
         Parser term = ast(seq(Expr.class).then(factor, repeat(seq(fOperator, factor)))).named("term");
@@ -91,6 +93,8 @@ public class BasicParser extends NonTerminalParser {
         classDef.of(seq(ClassDef.class).then(sep("class"), name, maybe(seq(sep("extends"), name)), classBlock)).named("classDef");
 
         array.of(seq(Array.class).then(sep("["), maybe(seq(expr, repeat(seq(sep(","), expr)))), sep("]"))).named("array");
+        pair.then(name, sep(":"), stmt).named("pair");
+        dictionary.of(seq(Dictionary.class).then(sep("{"), repeat(pair), sep("}"))).named("dictionary");
 
         this.program = program;
     }
