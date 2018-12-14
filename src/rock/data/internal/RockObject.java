@@ -22,21 +22,26 @@ public class RockObject extends RockAdapter {
     }
 
     @Override
-    public Rock get(Object key) throws RockException {
-        /*Rock func = env.get(GET);
-        if (func != null) {
-            return func.invoke(new RockString(String.valueOf(key)));
-        }*/
-        return env.get(key);
+    public RockType type() {
+        return RockType.OBJ;
     }
 
     @Override
-    public Rock set(Object key, Rock val) throws RockException {
-        /*Rock func = env.get(SET);
-        if (func != null) {
-            return func.invoke(new RockString(String.valueOf(key)), val);
-        }*/
-        return env.set(key, val);
+    public Rock member(String mem) throws RockException {
+        Environment e = env.locate(mem);
+        if (e != env) {
+            throw new RockException("cannot get member: " + mem);
+        }
+        return env.localGet(mem);
+    }
+
+    @Override
+    public Rock member(String mem, Rock value) throws RockException {
+        Environment e = env.locate(mem);
+        if (e != env) {
+            throw new RockException("cannot get member: " + mem);
+        }
+        return env.localSet(mem, value);
     }
 
     @Override

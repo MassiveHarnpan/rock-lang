@@ -21,6 +21,9 @@ public abstract class Rock implements Environment {
         return get((Object) key);
     }
 
+    public abstract Rock member(String mem) throws RockException;
+    public abstract Rock member(String mem, Rock value) throws RockException;
+
     public abstract boolean support(String op, Rock another);
 
     public abstract Rock compute(String op, Rock another) throws RockException;

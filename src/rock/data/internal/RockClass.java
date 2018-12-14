@@ -16,10 +16,16 @@ public class RockClass extends RockAdapter {
     private Environment outer;
 
     public RockClass(String name, RockClass superClass, Evaluator body, Environment outer) {
+        super();
         this.superClass = superClass;
         this.name = name;
         this.body = body;
         this.outer = outer;
+    }
+
+    @Override
+    public RockType type() {
+        return RockType.CLS;
     }
 
     public String name() {
@@ -66,9 +72,9 @@ public class RockClass extends RockAdapter {
     }
 
     @Override
-    public Rock get(Object key) throws RockException {
+    public Rock member(String key) throws RockException {
         if (!(key instanceof String)) {
-            throw new RockException("constructor's name must be a string");
+            throw new RockException("the name of a constructor must be a string");
         }
         Logger.log("create new constructor: " + name + "." + key);
         return new RockConstructor(this, (String) key);

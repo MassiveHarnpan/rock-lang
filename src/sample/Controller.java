@@ -5,7 +5,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import rock.Lexer;
+import rock.RockVirtualMachine;
 import rock.ast.ASTree;
+import rock.ast.Array;
 import rock.data.Environment;
 import rock.data.NestedEnvironment;
 import rock.data.Rock;
@@ -19,9 +21,11 @@ import rock.util.Logger;
 
 import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class Controller extends RockVirtualMachine implements Initializable {
 
     @FXML
     private TextArea tarCode;
@@ -31,15 +35,14 @@ public class Controller implements Initializable {
     private TextArea tarConsole;
 
 
-    private Lexer lexer;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //Function println = new NativeFunction("println", System.out, System.out.getClass().getDeclaredMethod("println", Object.class));
         //runtime.put(println.name(), println);
         //Function print = new NativeFunction("print", System.out, System.out.getClass().getDeclaredMethod("print", Object.class));
         //runtime.put(print.name(), print);
-        runtime = new BasicRuntimeEnvironment();
+        this.init();
+        Environment runtime = this.getRuntime();
 
         try {
             runtime.set("print", new RockFunction("print", new String[]{"msg"}, new NativeEvaluator() {
@@ -52,7 +55,7 @@ public class Controller implements Initializable {
             runtime.set("println", new RockFunction("print", new String[]{"msg"}, new NativeEvaluator() {
                 @Override
                 public Rock eval(Environment env) throws RockException {
-                    tarConsole.appendText("\n" + String.valueOf(env.get("msg")));
+                    tarConsole.appendText(String.valueOf(env.get("msg")) + "\n");
                     return null;
                 }
             }, runtime));
@@ -68,32 +71,26 @@ public class Controller implements Initializable {
         }
     }
 
-    private Parser parser = new BasicParser();
-    private Environment runtime;
     @FXML
     public void run(){
         System.out.println("Code runs");
-        lexer = new Lexer(new StringReader(tarCode.getText()));
         clearConsole();
-        try {
-            ASTree ast = parser.parse(lexer);
-            if (ast == null) {
+
+        Rock rock = this.eval(new StringReader(tarCode.getText()));
+            /*if (ast == null) {
                 tarParser.setText(">>> Failed\n");
             } else {
                 ast = ast.simplify();
                 tarParser.setText(">>> Succeed\n");
-                Logger.log("AST result = " + ast.getClass().getSimpleName());
-                tarParser.appendText(ast.toString()/*.replace("\n", "#EOF")*/+'\n');
+                //Logger.log("AST result = " + ast.getClass().getSimpleName());
+                tarParser.appendText(ast.toString()*//*.replace("\n", "#EOF")*//*+'\n');
                 outputParseResult(ast, 0);
-            }
-            tarParser.appendText("\n------------------------\n");
-            Rock r = ast.eval(new NestedEnvironment(runtime));
-            String rst = String.valueOf(r == null ? "<>" : r.toString());
-            tarConsole.appendText("\n=> " + rst);
-        } catch (RockException e) {
-            e.printStackTrace();
-            tarParser.appendText("\n" + e.getMessage());
-        }
+            }*/
+        tarParser.appendText("\n------------------------\n");
+        //Rock r = ast.eval(new NestedEnvironment(runtime));
+        //String rst = String.valueOf(r == null ? "<>" : r.toString());
+        String rst = String.valueOf(rock == null ? "<>" : rock.toString());
+        tarConsole.appendText("\n=> " + rst);
     }
 
     private void outputParseResult(ASTree ast, int indent) {
@@ -137,4 +134,26 @@ public class Controller implements Initializable {
         }
     }
 
+    @Override
+    public void onException(RockException e) {
+        e.printStackTrace();
+        tarConsole.appendText("\n!--!--!--!--!--!--!--!--!");
+        tarConsole.appendText("\n" + e.getMessage());
+        tarConsole.appendText("\n!--!--!--!--!--!--!--!--!");
+    }
+
+    @Override
+    public void onLog(String msg) {
+        tarParser.appendText("\n" + msg);
+    }
+
+    @Override
+    public void onOutput(String msg) {
+        tarConsole.appendText(msg);
+    }
+
+    @Override
+    public String onInput() {
+        return "233";
+    }
 }

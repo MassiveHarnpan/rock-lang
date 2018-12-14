@@ -17,7 +17,7 @@ public class NestedEnvironment implements Environment {
     public NestedEnvironment() {
     }
 
-    protected NestedEnvironment locate(Object key) {
+    public NestedEnvironment locate(Object key) {
         if (values.containsKey(key)) {
             return this;
         }
@@ -43,6 +43,14 @@ public class NestedEnvironment implements Environment {
             return null;
         }
         return env.values.get(key);
+    }
+
+    public Rock localGet(Object key) {
+        return values.get(key);
+    }
+
+    public Rock localSet(Object key, Rock value) {
+        return values.put(key, value);
     }
 
     public Environment outer() {

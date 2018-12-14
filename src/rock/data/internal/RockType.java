@@ -8,6 +8,7 @@ public enum RockType {
     CON("constructor"),
     OBJ("object"),
     CLS("class"),
+    DIC("dictionary"),
     ARR("array"),
     NIL("nil");
 

@@ -1,5 +1,6 @@
 package rock.runtime;
 
+import rock.RockVirtualMachine;
 import rock.data.*;
 import rock.data.internal.*;
 import rock.exception.RockException;
@@ -11,18 +12,12 @@ public class BasicRuntimeEnvironment extends NestedEnvironment {
 
 
 
-    public BasicRuntimeEnvironment() {
+    public BasicRuntimeEnvironment(RockVirtualMachine rvm) {
 
         BASIC_ROCK_OBJECT_CLASS = new RockClass("Object", null, new NativeEvaluator() {
             @Override
             public Rock eval(Environment env) throws RockException {
-                env.set("toString", new RockFunction("toString", new String[0], null, null) {
-                    @Override
-                    public Rock invoke(Rock... args) throws RockException {
-                        return new RockString(env.toString());
-                    }
-                });
-                return null;
+                return new RockString("<object>");
             }
         }, this);
 
@@ -40,24 +35,38 @@ public class BasicRuntimeEnvironment extends NestedEnvironment {
             e.printStackTrace();
         }
         this.set("currentTimeMillis", currentTimeMillis);
+
+        this.set("input", new RockFunction("input", new String[0], new NativeEvaluator() {
+            @Override
+            public Rock eval(Environment env) throws RockException {
+                return new RockString(rvm.onInput());
+            }
+        }, this));
+        this.set("output", new RockFunction("output", new String[]{"msg"}, new NativeEvaluator() {
+            @Override
+            public Rock eval(Environment env) throws RockException {
+                rvm.onOutput(String.valueOf(env.get("msg")));
+                return null;
+            }
+        }, this));
         this.set("print", new RockFunction("print", new String[]{"msg"}, new NativeEvaluator() {
             @Override
             public Rock eval(Environment env) throws RockException {
-                System.out.println(String.valueOf(env.get("msg")));
+                rvm.onOutput(String.valueOf(env.get("msg")));
                 return null;
             }
         }, this));
         this.set("println", new RockFunction("println", new String[] {"msg"}, new NativeEvaluator() {
             @Override
             public Rock eval(Environment env) throws RockException {
-                System.out.println("\n" + String.valueOf(env.get("msg")));
+                rvm.onOutput(String.valueOf(env.get("msg")) + "\n");
                 return null;
             }
         }, this));
         this.set("ln", new RockFunction("ln", new String[] {}, new NativeEvaluator() {
             @Override
             public Rock eval(Environment env) throws RockException {
-                System.out.println("\n");
+                rvm.onOutput("\n");
                 return null;
             }
         }, this));

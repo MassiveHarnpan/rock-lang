@@ -1,76 +1,74 @@
 package sample;
 
-import rock.Lexer;
-import rock.ast.ASTree;
-import rock.data.NestedEnvironment;
+import rock.RockVirtualMachine;
 import rock.data.Rock;
 import rock.exception.RockException;
-import rock.parser.BasicParser;
-import rock.parser.Parser;
-import rock.runtime.BasicRuntimeEnvironment;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
-public class ConsoleMain {
+public class ConsoleMain extends RockVirtualMachine {
 
     static BufferedReader reader;
-    static Parser parser = new BasicParser();
+    static RockVirtualMachine rvm = new ConsoleMain();
 
     public static void main(String[] args) throws IOException, RockException {
-        init();
+        initialize();
 
-        Lexer lexer;
-
-        StringBuffer program = new StringBuffer();
-        String prev = null;
         String line;
+
+
+
+        rvm.onOutput(">>> ");
         while ((line = reader.readLine()) != null) {
             line = line.trim();
             if ("/exit".equals(line)) {
                 break;
             }
-            if (prev == null) {
-                if (run(line)) {
-                    prev = null;
-                    continue;
-                }
-                prev = line;
-                program.delete(0, program.length());
-                program.append(line);
-                continue;
+            Rock r = rvm.evalLine(line);
+            if (r == null) {
+                rvm.onOutput("... ");
+            } else {
+                rvm.onOutput(">=> " + r + '\n');
+                rvm.onOutput(">>> ");
             }
-            if (line.isEmpty()) {
-                run(program.toString());
-                prev = null;
-                program.delete(0, program.length());
-                continue;
-            }
-            program.append("\n" + line);
-            prev = line;
         }
     }
 
-    static boolean run(String s) throws RockException {
-        Lexer lexer = new Lexer(new StringReader(s));
-        ASTree ast = parser.parse(lexer);
-        if (ast == null) {
-            return false;
-        }
-        Rock r = ast.eval(runtime);
-        String rst = (r == null) ? "<>" : r.toString();
-        System.out.println("=>  " + rst);
-        return true;
-    }
-
-    static NestedEnvironment runtime = new NestedEnvironment();
-
-    public static void init() {
+    public static void initialize() {
+        rvm.init();
         try {
             reader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        runtime = new BasicRuntimeEnvironment();
     }
 
+    @Override
+    public void onException(RockException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onLog(String msg) {
+        System.out.println(msg);
+    }
+
+    @Override
+    public void onOutput(String msg) {
+        System.out.print(msg);
+    }
+
+    @Override
+    public String onInput() {
+        try {
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class Dot extends ASTList {
 
     @Override
     public Proxy proxy(Environment env, Rock base) throws RockException {
-        return new EnvProxy(base, name());
+        return new MemberProxy(base, name());
     }
 
     @Override

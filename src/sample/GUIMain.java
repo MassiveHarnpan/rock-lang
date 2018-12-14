@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 
-public class Main extends Application {
+public class GUIMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{

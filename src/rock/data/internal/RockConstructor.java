@@ -15,6 +15,7 @@ public class RockConstructor extends RockAdapter {
     private String name;
 
     public RockConstructor(RockClass clazz, String name) {
+        super();
         this.clazz = clazz;
         this.name = name;
     }

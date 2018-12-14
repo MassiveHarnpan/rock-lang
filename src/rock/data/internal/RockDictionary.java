@@ -3,23 +3,16 @@ package rock.data.internal;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
-import rock.exception.UnsupportedOperationException;
-import rock.runtime.NativeEvaluator;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class RockAdapter extends Rock {
-
-
+public class RockDictionary extends Rock {
     @Override
     public Rock member(String mem) throws RockException {
-        throw new RockException("cannot get member of " + toString());
+        throw new RockException("cannot get member of a dictionary: "+ toString());
     }
 
     @Override
     public Rock member(String mem, Rock value) throws RockException {
-        throw new RockException("cannot set member of " + toString());
+        throw new RockException("cannot set member of a dictionary: "+ toString());
     }
 
     @Override
@@ -39,7 +32,7 @@ public class RockAdapter extends Rock {
 
     @Override
     public RockType type() {
-        return null;
+        return RockType.DIC;
     }
 
     @Override
@@ -48,17 +41,12 @@ public class RockAdapter extends Rock {
     }
 
     @Override
-    public Object getJavaPrototype() {
+    public Rock get(Object key) throws RockException {
         return null;
     }
 
     @Override
-    public Rock get(Object key) throws RockException {
-        throw new UnsupportedOperationException("get", this.toString(), key.toString());
-    }
-
-    @Override
     public Rock set(Object key, Rock val) throws RockException {
-        throw new UnsupportedOperationException("set", this.toString(), key.toString(), val.toString());
+        return null;
     }
 }

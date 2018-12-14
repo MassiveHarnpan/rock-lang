@@ -1,13 +1,24 @@
 package rock.util;
 
+import rock.RockVirtualMachine;
+
 public class Logger {
 
+    private static RockVirtualMachine rvm;
 
-    private static boolean show = true;
+    public static void setRVM(RockVirtualMachine rvm) {
+        Logger.rvm = rvm;
+    }
+
+    private static boolean show = false;
 
     public static void log(Object msg) {
         if (show) {
-            System.out.println(msg);
+            if (rvm == null) {
+                System.out.println(msg);
+            } else {
+                rvm.onLog(msg.toString());
+            }
         }
     }
 
