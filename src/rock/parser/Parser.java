@@ -16,13 +16,12 @@ import java.util.List;
 public class Parser extends NonTerminalElement {
 
     private SequenceElement sequence = new SequenceElement();
-    private ASTListFactory factory;
     private String name;
     private boolean asAst = false;
 
 
     public Parser(ASTListFactory factory, String name) {
-        this.factory = factory;
+        super(factory);
         this.name = name == null ? getClass().getSimpleName() : name;
     }
 
@@ -36,10 +35,6 @@ public class Parser extends NonTerminalElement {
 
     public SequenceElement getSequence() {
         return sequence;
-    }
-
-    public ASTListFactory getFactory() {
-        return factory;
     }
 
     private boolean forking = false;
@@ -141,7 +136,7 @@ public class Parser extends NonTerminalElement {
         if (asAst) {
             List<ASTree> list = new ArrayList<>();
             if (sequence.parse(lexer, list)) {
-                ASTList ast = factory.create(list.toArray(new ASTree[list.size()]));
+                ASTList ast = getFactory().create(list.toArray(new ASTree[list.size()]));
                 res.add(ast);
                 return true;
             } else {

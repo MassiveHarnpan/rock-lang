@@ -18,7 +18,7 @@ public abstract class Element {
         if (!result) {
             lexer.recovery(check);
             while (res.size() > back) {
-                res.remove(back);
+                res.remove(res.size() - 1);
             }
         }
         return result;

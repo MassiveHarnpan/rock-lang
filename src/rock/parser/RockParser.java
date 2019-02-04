@@ -9,13 +9,19 @@ import rock.parser.element.TokenElement;
 import rock.token.Token;
 import rock.token.TokenType;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RockParser extends Parser {
+
+    private Parser program;
+
     public RockParser() {
-        super(ASTList.FACTORY, "rock");
+        super(Program.FACTORY, "rock");
 
         Element name = new TokenElement(Name.FACTORY, TokenType.NAME);
         Element number = new TokenElement(TokenType.NUMBER);
@@ -64,49 +70,66 @@ public class RockParser extends Parser {
                 .or(valuable)
                 .or(maybe(skip(comment)));
 
-        Parser program = new Parser(Program.FACTORY, "program").repeat(maybe(progStmt), split(";"), false).asAST();
-
-        this.then(program);
+        this.program = new Parser(Program.FACTORY, "program").repeat(maybe(progStmt), split(";"), false).asAST();
 
     }
 
     @Override
+    public ASTree parse(Lexer lexer) throws ParseException {
+        return program.parse(lexer);
+    }
+
+    @Override
+    public boolean parse(Lexer lexer, List<ASTree> res) throws ParseException {
+        return program.parse(lexer, res);
+    }
+
+    @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws ParseException {
-        return super.doParse(lexer, res) && lexer.peek(0) == Token.EOF;
+        return program.doParse(lexer, res) && lexer.peek(0) == Token.EOF;
     }
 
     public static void main(String[] args) {
-        List<String> data = new ArrayList<>();
+//        List<String> data = new ArrayList<>();
+//
+//        data.add("90 + 1");
+//        data.add("95.56");
+//        data.add("13 > 9");
+//        data.add("13 >= 9");
+//        data.add("13 < 9");
+//        data.add("13 <= 9");
+//        data.add("57 * 9 -2");
+//        data.add("1 - 3*5");
+//        data.add("1 - 3*5==     90");
+//        data.add("name = 89 +8 * 5.5");
+//        data.add("result = 89 +8 * 5.5 >= 95");
+//        data.add("result = -89 +8 * -5.5 >= 95");
+//        data.add("result = value.toString()");
+//        data.add("result = value.doSth(sth1, sth2)");
+//        data.add("result = value.doSth(45, 777777)");
+//        data.add("result = var1.innerData[1].toString()");
+//        data.add("result = var1.innerData[\"invokable\"].method(arg1, arg2)");
+//        data.add("result = pro =  var1.innerData[\"invokable\"].method(arg1, arg2)");
+//
+//        Parser parser = new RockParser();
+//
+//
+//        data.forEach(s -> {
+//            Lexer lexer = new Lexer(new StringReader(s));
+//            try {
+//                System.out.println(s + "        " + parser.parse(lexer));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        });
 
-        data.add("90 + 1");
-        data.add("95.56");
-        data.add("13 > 9");
-        data.add("13 >= 9");
-        data.add("13 < 9");
-        data.add("13 <= 9");
-        data.add("57 * 9 -2");
-        data.add("1 - 3*5");
-        data.add("1 - 3*5==     90");
-        data.add("name = 89 +8 * 5.5");
-        data.add("result = 89 +8 * 5.5 >= 95");
-        data.add("result = -89 +8 * -5.5 >= 95");
-        data.add("result = value.toString()");
-        data.add("result = value.doSth(sth1, sth2)");
-        data.add("result = value.doSth(45, 777777)");
-        data.add("result = var1.innerData[1].toString()");
-        data.add("result = var1.innerData[\"invokable\"].method(arg1, arg2)");
-        data.add("result = pro =  var1.innerData[\"invokable\"].method(arg1, arg2)");
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(new File("test/test1.roc")), "UTF-8")) {
+            Lexer lexer = new Lexer(reader);
 
-        Parser parser = new RockParser();
-
-
-        data.forEach(s -> {
-            Lexer lexer = new Lexer(new StringReader(s));
-            try {
-                System.out.println(s + "        " + parser.parse(lexer));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        });
+            RockParser parser = new RockParser();
+            System.out.println(parser.parse(lexer));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

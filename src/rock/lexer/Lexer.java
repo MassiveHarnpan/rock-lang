@@ -68,6 +68,7 @@ public class Lexer {
             token = lexer.lex(lineNumber, line, index);
             if (token != null) {
                 parsedTokens.add(token);
+                System.out.println(token);
                 return index + token.literal().length();
             }
         }

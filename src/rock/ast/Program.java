@@ -33,7 +33,7 @@ public class Program extends ASTList {
         StringBuffer sb = new StringBuffer();
         Iterator<ASTree> itr = children.iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next().toString(0, "    "));
+            sb.append(itr.next()).append(';');
             if (itr.hasNext()) {
                 sb.append('\n');
             }
