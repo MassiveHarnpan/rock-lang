@@ -12,6 +12,8 @@ import rock.util.Logger;
 
 public class Negative extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new Negative(elements);
+
     public Negative(ASTree... children) {
         super(children);
     }

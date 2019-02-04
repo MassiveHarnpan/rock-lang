@@ -10,6 +10,8 @@ import java.util.Iterator;
 
 public class Expr extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new Expr(elements);
+
     public Expr(ASTree... children) {
         super(children);
         liftSingleElement(true);

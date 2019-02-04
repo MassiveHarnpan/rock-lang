@@ -7,6 +7,9 @@ import rock.data.Rock;
 import rock.exception.RockException;
 
 public class Index extends ASTList{
+
+    public static final ASTListFactory FACTORY = elements -> new Index(elements);
+
     public Index(ASTree... children) {
         super(children);
     }

@@ -7,6 +7,8 @@ import rock.util.Logger;
 
 public class AssignStmt extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new AssignStmt(elements);
+
 
 
     public AssignStmt(ASTree... children) {
@@ -39,6 +41,6 @@ public class AssignStmt extends ASTList {
 
     @Override
     public String toString() {
-        return name().toString() + " = " + value().toString();
+        return name() + " = " + value();
     }
 }

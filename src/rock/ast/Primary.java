@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 public class Primary extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new Primary(elements);
+
     public Primary(ASTree... children) {
         super(children);
         liftSingleElement(true);

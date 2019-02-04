@@ -3,31 +3,21 @@ package rock.token;
 import rock.exception.RockException;
 
 public class Token {
-    public static final Token EOF = new Token(-1, "#EOF");
+    public static final Token EOF = new Token(-1, -1, TokenType.EOF, "#EOF");
     public static final String EOL = "\n";
 
 
     private int lineNumber;
+    private int offsetNumber;
     private String literal;
     private TokenType type = null;
 
 
-    public Token(int lineNumber, TokenType type, String literal) {
+    public Token(int lineNumber, int offsetNumber, TokenType type, String literal) {
         this.lineNumber = lineNumber;
+        this.offsetNumber = offsetNumber;
         this.type = type;
         this.literal = literal;
-    }
-
-    public Token(int lineNumber, String literal) {
-        this(lineNumber, null, literal);
-    }
-
-    public Token(int lineNumber, TokenType type) {
-        this(lineNumber, type, "");
-    }
-
-    public Token(int lineNumber) {
-        this(lineNumber, null, "");
     }
 
 
@@ -43,20 +33,9 @@ public class Token {
         return lineNumber;
     }
 
-    public boolean isIdentifier() {
-        return type == TokenType.IDENTIFIER;
+    public int getOffsetNumber() {
+        return offsetNumber;
     }
-
-    public boolean isNumber() {
-        return type == TokenType.NUMBER;
-    }
-
-    public boolean isString() {
-        return type == TokenType.STRING;
-    }
-
-
-
 
     // only for number token
     public Number getNum() throws RockException {
@@ -74,5 +53,10 @@ public class Token {
 
     public Object value() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "{type=" + getClass().getSimpleName() + ", literal=" + literal + ", value=" + value() + "}";
     }
 }

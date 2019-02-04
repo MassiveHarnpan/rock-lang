@@ -11,6 +11,8 @@ import java.util.List;
 
 public class ASTList extends ASTree {
 
+    public static final ASTListFactory FACTORY = (elements) -> new ASTList(elements);
+
     protected List<ASTree> children = new ArrayList<>();
 
     protected Iterator<ASTree> iterator() {

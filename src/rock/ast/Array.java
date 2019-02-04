@@ -13,15 +13,6 @@ public class Array extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        Rock[] elems = new Rock[childCount()];
-        for (int i = 0; i < childCount(); i++) {
-            elems[i] = child(i).eval(env);
-        }
-        return new RockArray(elems);
-    }
-
-    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("[");

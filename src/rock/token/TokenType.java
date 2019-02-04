@@ -6,7 +6,9 @@ public enum TokenType {
     NUMBER,
     NIL,
     IDENTIFIER,
-    NAME
+    NAME,
+    COMMENT,
+    EOF,
 
 
 }

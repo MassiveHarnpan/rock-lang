@@ -13,6 +13,8 @@ import java.util.List;
 
 public class FuncDef extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new FuncDef(elements);
+
     public FuncDef(ASTree... children) {
         super(children);
     }

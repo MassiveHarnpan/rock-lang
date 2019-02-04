@@ -4,14 +4,9 @@ public class NumToken extends Token {
 
     private Number number;
 
-    public NumToken(int lineNumber, String literal, Number number) {
-        super(lineNumber, TokenType.NUMBER, literal);
+    public NumToken(int lineNumber, int offsetNumber, String literal, Number number) {
+        super(lineNumber, offsetNumber, TokenType.NUMBER, literal);
         this.number = number;
-    }
-
-    @Override
-    public boolean isNumber() {
-        return true;
     }
 
     @Override

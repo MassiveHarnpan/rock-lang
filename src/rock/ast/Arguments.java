@@ -3,7 +3,11 @@ package rock.ast;
 import rock.data.*;
 import rock.exception.RockException;
 
+import java.util.Iterator;
+
 public class Arguments extends ASTList {
+
+    public static final ASTListFactory FACTORY = elements -> new Arguments(elements);
 
     public Arguments(ASTree... children) {
         super(children);
@@ -22,11 +26,12 @@ public class Arguments extends ASTList {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("(");
-        if (childCount() > 0) {
-            sb.append(child(0).toString());
-        }
-        for (int i = 1; i < childCount(); i++) {
-            sb.append(", ").append(child(i).toString());
+        Iterator<ASTree> itr = iterator();
+        while (itr.hasNext()) {
+            sb.append(itr.next());
+            if (itr.hasNext()) {
+                sb.append(", ");
+            }
         }
         return sb.append(")").toString();
     }

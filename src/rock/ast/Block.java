@@ -10,6 +10,8 @@ import java.util.Iterator;
 
 public class Block extends ASTList {
 
+    public static final ASTListFactory FACTORY = (elements) -> new Block(elements);
+
     public Block(ASTree... children) {
         super(children);
     }

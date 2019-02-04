@@ -2,10 +2,8 @@ package rock.data.internal;
 
 import rock.data.Environment;
 import rock.data.Evaluator;
-import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.exception.RockException;
-import rock.runtime.BasicRuntimeEnvironment;
 import rock.util.Logger;
 
 public class RockClass extends RockAdapter {

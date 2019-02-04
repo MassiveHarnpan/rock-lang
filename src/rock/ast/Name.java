@@ -10,6 +10,8 @@ import rock.util.Logger;
 
 public class Name extends ASTLeaf {
 
+    public static final ASTLeafFactory FACTORY = token -> new Name(token);
+
     public Name(Token token) {
         super(token);
     }

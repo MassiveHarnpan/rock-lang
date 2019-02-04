@@ -5,6 +5,9 @@ import rock.util.Logger;
 import java.util.Iterator;
 
 public class Program extends ASTList {
+
+    public static final ASTListFactory FACTORY = (elements) -> new Program(elements);
+
     public Program(ASTree... children) {
         super(children);
     }

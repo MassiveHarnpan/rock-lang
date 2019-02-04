@@ -4,10 +4,6 @@ import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
-import rock.runtime.NativeEvaluator;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RockAdapter extends Rock {
 

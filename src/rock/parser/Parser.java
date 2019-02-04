@@ -1,202 +1,155 @@
 package rock.parser;
 
-
+import rock.ast.ASTListFactory;
+import rock.exception.ParseException;
+import rock.lexer.Lexer;
+import rock.ast.ASTList;
+import rock.ast.ASTree;
 import rock.exception.RockException;
-import rock.ast.*;
-import rock.Lexer;
-import rock.token.*;
-import rock.util.Logger;
+import rock.parser.element.*;
+import rock.token.Token;
+import rock.token.TokenType;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Parser {
+public class Parser extends NonTerminalElement {
 
-    private static int i = 0;
+    private SequenceElement sequence = new SequenceElement();
+    private ASTListFactory factory;
+    private String name;
+    private boolean asAst = false;
 
-    public boolean parse(Lexer lexer, List<ASTree> res) throws RockException {
-        //if (i > 50) System.exit(-1);
-        i ++ ;
-        StringBuffer ind = new StringBuffer();
-        for (int j = 0; j < i; j++) {
-            ind.append(" |");
-        }
-        String indent = ind.toString();
-        String name = getName();
-        Logger.log(indent+"Parsing " + name);
 
-        int check = lexer.pointer();
-        int back = res.size();
-        boolean result = doParse(lexer, res);
-        if (!result) {
-            Logger.log(indent+"parse "+name+" failed");
-            lexer.recovery(check);
-            while (res.size() > back) {
-                res.remove(back);
-            }
-        } else {
-            Logger.log(indent+"parse "+name+" succeeded: " + res);
-        }
-        i--;
-        return result;
+    public Parser(ASTListFactory factory, String name) {
+        this.factory = factory;
+        this.name = name == null ? getClass().getSimpleName() : name;
     }
-    protected abstract boolean doParse(Lexer lexer, List<ASTree> res) throws RockException;
-    public abstract ASTree parse(Lexer lexer) throws RockException;
 
-    protected String name;
+    public Parser(ASTListFactory factory) {
+        this(factory, null);
+    }
 
-    public Parser named(String name) {
-        this.name = name;
+    public Parser() {
+        this(ASTList.FACTORY, null);
+    }
+
+    public SequenceElement getSequence() {
+        return sequence;
+    }
+
+    public ASTListFactory getFactory() {
+        return factory;
+    }
+
+    private boolean forking = false;
+
+    private void add(Element e) {
+        if (forking) {
+            sub.then(e);
+        } else {
+            sequence.then(e);
+        }
+    }
+
+    public Parser then(Element e) {
+        add(e);
         return this;
     }
 
-    public String getName() {
-        return this.name == null ? getClass().getSimpleName() : this.name;
-    }
-    //public abstract boolean match(Lexer lexer) throws RockException;
-
-
-
-
-    public static ForkParser fork(Class<ASTList> as) {
-        return new ForkParser(as);
+    public Parser repeat(Element element, Element splitter, boolean atLeastOnce) {
+        RepeatElement repeat = new RepeatElement(element, splitter);
+        repeat.setAtLeastOneElement(atLeastOnce);
+        add(repeat);
+        return this;
     }
 
-    public static ForkParser fork() {
-        return new ForkParser(ASTList.class);
+    public Parser repeat(Element element, boolean atLeastOnce) {
+        RepeatElement repeat = new RepeatElement(element, null);
+        repeat.setAtLeastOneElement(atLeastOnce);
+        add(repeat);
+        return this;
     }
 
-    public static ForkParser fork(Parser... parsers) {
-        return new ForkParser(ASTList.class, parsers);
+    private ForkElement forks;
+    private SequenceElement sub;
+
+    public Parser fork() {
+        forking = true;
+        forks = new ForkElement();
+        sub = new SequenceElement();
+        return this;
     }
 
-
-
-
-
-
-    public static RepeatParser repeat(Class<? extends ASTList> as, Parser element) {
-        return new RepeatParser(as, element);
+    public Parser or() {
+        forks.or(sub);
+        sub = new SequenceElement();
+        return this;
     }
 
-    public static RepeatParser repeat(Parser element) {
-        return new RepeatParser(ASTList.class, element);
-    }
-
-
-
-
-
-
-    public static ASTParser ast(Parser parser) {
-        return new ASTParser(ASTList.class, parser);
-    }
-
-    public static ASTParser ast() {
-        return new ASTParser(ASTList.class);
+    public Parser merge() {
+        forking = false;
+        forks.or(sub);
+        add(forks);
+        forks = null;
+        return this;
     }
 
 
-
-
-
-
-
-
-
-
-    public static SeqParser seq(Class<? extends ASTList> as) {
-        return new SeqParser(as);
+    public Parser sep(String value) {
+        add(new SepElement(value));
+        return this;
     }
 
-    public static SeqParser seq(Parser... parsers) {
-        return new SeqParser(ASTList.class, parsers);
+    public Parser name() {
+        add(new TokenElement(TokenType.NAME));
+        return this;
     }
 
-
-
-
-
-
-
-    public static BinaryParser binary(Class<ASTList> as, Parser left, Parser operator, Parser right) {
-        return new BinaryParser(as, left, operator, right);
+    public Parser number() {
+        add(new TokenElement(TokenType.NUMBER));
+        return this;
     }
 
-    public static BinaryParser binary(Class<ASTList> as, Parser element, Parser operator) {
-        return new BinaryParser(as, element, operator, element);
+    public Parser string() {
+        add(new TokenElement(TokenType.STRING));
+        return this;
     }
 
-    public static BinaryParser binary(Parser element, Parser operator) {
-        return new BinaryParser(ASTList.class, element, operator, element);
+    public Parser comment() {
+        add(new TokenElement(TokenType.COMMENT));
+        return this;
     }
 
-    public static BinaryParser binary(Parser left, Parser operator, Parser right) {
-        return new BinaryParser(ASTList.class, left, operator, right);
+    public Parser asAST() {
+        asAst = true;
+        return this;
     }
 
 
-
-
-    public static SeparateParser sep(Class<? extends Token> clazz, Object... values) {
-        return new SeparateParser(clazz, values);
-    }
-
-    public static SeparateParser sep(Object... values) {
-        return new SeparateParser(IdToken.class, values);
+    @Override
+    protected boolean doParse(Lexer lexer, List<ASTree> res) throws ParseException {
+        if (asAst) {
+            List<ASTree> list = new ArrayList<>();
+            if (sequence.parse(lexer, list)) {
+                ASTList ast = factory.create(list.toArray(new ASTree[list.size()]));
+                res.add(ast);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return sequence.parse(lexer, res);
+        }
     }
 
 
 
-
-    public static OptionParser maybe(Parser parser) {
-        return new OptionParser(ASTList.class, parser, false);
+    public static TokenElement sign(String... values) {
+        return new TokenElement(TokenType.IDENTIFIER, values);
     }
 
-    public static OptionParser option(Parser parser) {
-        return new OptionParser(ASTList.class, parser, true);
+    public static TokenElement split(String... values) {
+        return new SepElement(values);
     }
-
-    public static OptionParser option() {
-        return new OptionParser(ASTList.class, null, true);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    public static TerminalParser terminal(Class<ASTLeaf> as, Class<? extends Token> clazz, Object... values) {
-        return new TerminalParser(as, clazz, values);
-    }
-
-    public static TerminalParser id(Object... values) {
-        return new TerminalParser(ASTLeaf.class, IdToken.class, values);
-    }
-
-    public static TerminalParser num() {
-        return new TerminalParser(Basic.class, NumToken.class);
-    }
-
-    public static TerminalParser str() {
-        return new TerminalParser(Basic.class, StrToken.class);
-    }
-
-    public static TerminalParser name() {
-        return new TerminalParser(Name.class, NameToken.class);
-    }
-
-
-
-
-
-
-
-
-
 }
