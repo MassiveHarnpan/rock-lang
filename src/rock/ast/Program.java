@@ -2,6 +2,7 @@ package rock.ast;
 
 import rock.util.Logger;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Program extends ASTList {

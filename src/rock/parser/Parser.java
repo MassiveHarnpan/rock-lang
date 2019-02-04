@@ -130,6 +130,15 @@ public class Parser extends NonTerminalElement {
         return new SkipElement(element);
     }
 
+    @Override
+    public ASTree parse(Lexer lexer) throws ParseException {
+        List<ASTree> list = new ArrayList<>();
+        if (sequence.parse(lexer, list)) {
+            ASTList ast = getFactory().create(list.toArray(new ASTree[list.size()]));
+            return ast;
+        }
+        return null;
+    }
 
     @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws ParseException {
