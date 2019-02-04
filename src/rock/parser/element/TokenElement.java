@@ -1,6 +1,7 @@
 package rock.parser.element;
 
 import rock.ast.ASTLeaf;
+import rock.ast.ASTLeafFactory;
 import rock.ast.ASTree;
 import rock.exception.ParseException;
 import rock.exception.RockException;
@@ -14,8 +15,14 @@ public class TokenElement extends Element {
 
     private TokenType type;
     private Set values;
+    private ASTLeafFactory factory;
 
     public TokenElement(TokenType type, Object... values) {
+        this(ASTLeaf.FACTORY, type, values);
+    }
+
+    public TokenElement(ASTLeafFactory factory, TokenType type, Object... values) {
+        this.factory = factory;
         this.type = type;
         if (values.length == 0) {
             this.values = null;
@@ -24,12 +31,16 @@ public class TokenElement extends Element {
         }
     }
 
+    public ASTLeafFactory getFactory() {
+        return factory;
+    }
+
     @Override
     public ASTree parse(Lexer lexer) throws ParseException {
         Token token = lexer.peek(0);
         if (checkToken(token)) {
             lexer.read();
-            return new ASTLeaf(token);
+            return factory.create(token);
         }
         return null;
     }
@@ -38,7 +49,7 @@ public class TokenElement extends Element {
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws ParseException {
         Token token = lexer.read();
         if (checkToken(token)) {
-            res.add(new ASTLeaf(token));
+            res.add(factory.create(token));
             return true;
         }
         return false;

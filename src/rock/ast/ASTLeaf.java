@@ -10,6 +10,9 @@ import rock.token.Token;
 import rock.util.Logger;
 
 public class ASTLeaf extends ASTree {
+
+    public static final ASTLeafFactory FACTORY = t -> new ASTLeaf(t);
+
     @Override
     public boolean isLeaf() {
         return true;

@@ -96,6 +96,7 @@ public class Parser extends NonTerminalElement {
     }
 
 
+
     public Parser sep(String value) {
         add(new SepElement(value));
         return this;
@@ -124,6 +125,14 @@ public class Parser extends NonTerminalElement {
     public Parser asAST() {
         asAst = true;
         return this;
+    }
+
+    public static MaybeElement maybe(Element element) {
+        return new MaybeElement(element);
+    }
+
+    public static SkipElement skip(Element element) {
+        return new SkipElement(element);
     }
 
 

@@ -17,7 +17,7 @@ public class RockParser extends Parser {
     public RockParser() {
         super(ASTList.FACTORY, "rock");
 
-        Element name = new TokenElement(TokenType.NAME);
+        Element name = new TokenElement(Name.FACTORY, TokenType.NAME);
         Element number = new TokenElement(TokenType.NUMBER);
         Element string = new TokenElement(TokenType.STRING);
         Element comment = new TokenElement(TokenType.COMMENT);
@@ -60,10 +60,13 @@ public class RockParser extends Parser {
 
         valuable.or(assign).or(expr);
 
-        this.fork()
-                .then(assign).or()
-                .then(valuable)
-                .merge();
+        ForkElement progStmt = new ForkElement()
+                .or(valuable)
+                .or(maybe(skip(comment)));
+
+        Parser program = new Parser(Program.FACTORY, "program").repeat(maybe(progStmt), split(";"), false).asAST();
+
+        this.then(program);
 
     }
 
