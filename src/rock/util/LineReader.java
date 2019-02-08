@@ -230,6 +230,16 @@ public class LineReader {
         skip(SPACE);
     }
 
+    public boolean read(char... chs) {
+        int number = lineNumber;
+        int offset = lineOffset;
+        if (hasMore() && match(read(), chs)) {
+            return true;
+        }
+        reset(number, offset);
+        return false;
+    }
+
     public boolean read(String s) {
         int number = lineNumber;
         int offset = lineOffset;

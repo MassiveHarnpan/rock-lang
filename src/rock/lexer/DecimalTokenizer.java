@@ -36,7 +36,7 @@ public class DecimalTokenizer extends Tokenizer {
 
         int iPart = 0; // 整数部分
         double dPart = 0.0; // 小数部分
-        boolean possitiveE = true;
+        boolean positiveE = true;
         int ePart = 0; // 指数部分
         double value = 0;
 
@@ -58,8 +58,7 @@ public class DecimalTokenizer extends Tokenizer {
 
         Pos beforeE = reader.checkPoint();
 
-        if (!reader.hasMore() || reader.read() != 'e') {
-            reader.reset(beforeE);
+        if (!reader.read('e', 'E')) {
             return new DecToken(start, reader.substring(start), value);
         }
         if (!reader.hasMore()) {
@@ -67,23 +66,20 @@ public class DecimalTokenizer extends Tokenizer {
             return new DecToken(start, reader.substring(start), value);
         }
 
-        char ch = reader.peek();
-        if (ch == '-') {
-            possitiveE = false;
-            reader.read();
-        } else if (ch == '+') {
-            possitiveE = true;
-            reader.read();
+        if (reader.read('-')) {
+            positiveE = false;
+        } else if (reader.read('+')) {
+            positiveE = true;
         }
 
-        if (!reader.hasMore() || !isDigit(ch)) {
+        if (!reader.hasMore() || !isDigit(reader.peek())) {
             reader.reset(beforeE);
             return new DecToken(start, reader.substring(start), value);
         }
 
         ePart = readInt(reader, 10);
-        ePart = possitiveE ? ePart : -ePart;
-        value *= Math.pow(value, ePart);
+        ePart = positiveE ? ePart : -ePart;
+        value *= Math.pow(10, ePart);
 
         return new DecToken(start, reader.substring(start), value);
     }
@@ -94,6 +90,12 @@ public class DecimalTokenizer extends Tokenizer {
         data.add("64.   ");
         data.add("64.0   ");
         data.add("556.5888988  ");
+        data.add("556.5888988e9  ");
+        data.add("67.23e1  ");
+        data.add("67.23e2  ");
+        data.add("67.23e0  ");
+        data.add("556.192e-9  ");
+        data.add("5.192E-9  ");
         data.add("556.7  ");
         data.add(".256.write()  ");
         data.add("256.write()  ");

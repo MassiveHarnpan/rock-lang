@@ -5,8 +5,8 @@ public class NumberTokenizerUtil {
     public static double readDec(LineReader reader, int radix) {
         long r = radix;
         double decimal = 0.0;
-        while (reader.hasMore() && isDigit(reader.peek())) {
-            decimal += toInt(reader.read()) / r;
+        while (reader.hasMore() && inRangeOf(radix, reader.peek())) {
+            decimal += toInt(reader.read()) / (double) r;
             r *= radix;
         }
         return decimal;
