@@ -51,7 +51,7 @@ public class RockFunction extends RockAdapter {
         for (int i = 0; i < params.length; i++) {
             newEnv.set(params[i], args[i]);
         }
-        return body.eval(newEnv);
+        return body.eval(newEnv, this);
     }
 
     @Override

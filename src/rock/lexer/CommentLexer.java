@@ -25,7 +25,7 @@ public class CommentLexer implements ILexer {
     }
 
     @Override
-    public Token lex(int lineNumber, String s, int start) {
+    public Token read(int lineNumber, String s, int start) {
         for (Sign sign : Sign.values()) {
             int contentStart = start + sign.start.length();
             if (contentStart > s.length() || !s.regionMatches(false, start, sign.start, 0, sign.start.length())) {
@@ -70,6 +70,6 @@ public class CommentLexer implements ILexer {
 
         CommentLexer lexer = new CommentLexer();
 
-        data.forEach(s -> System.out.println((s + "        " + lexer.lex(0, s, 0)).replaceAll("\n", "#{EOL}")));
+        data.forEach(s -> System.out.println((s + "        " + lexer.read(0, s, 0)).replaceAll("\n", "#{EOL}")));
     }
 }

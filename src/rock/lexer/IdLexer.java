@@ -1,30 +1,27 @@
 package rock.lexer;
 
-import rock.ast.Array;
 import rock.token.IdToken;
 import rock.token.Token;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class IdLexer implements ILexer {
 
     private static String[] WORDS = new String[]{
-            "class", "def", "var", "if", "while", "return", "function"
+            "class", "def", "var", "if", "else", "while", "return", "function"
     };
 
     private static String[] KEYS = new String[]{
             "==", "!=", ">=", "<=", ">", "<",
-            "..",
             "=", "->", ";", "#", ".", ",", ":", "?",
-            "&", "|", "!",
+            "&&", "||", "&", "|", "!",
             "+", "-", "*", "/", "^",
             "{", "}", "(", ")", "[", "]",
     };
 
     @Override
-    public Token lex(int lineNumber, String s, int start) {
+    public Token read(int lineNumber, String s, int start) {
         for (String word : WORDS) {
             //System.out.println(word);
             if (checkWord(word, s, start)) {
@@ -73,6 +70,6 @@ public class IdLexer implements ILexer {
 
         IdLexer lexer = new IdLexer();
 
-        data.forEach(s -> System.out.println(s + "        " + lexer.lex(0, s, 0)));
+        data.forEach(s -> System.out.println(s + "        " + lexer.read(0, s, 0)));
     }
 }

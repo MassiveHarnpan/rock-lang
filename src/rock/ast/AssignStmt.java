@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.*;
 import rock.exception.RockException;
 import rock.exception.UnsupportedASTException;
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
 
 public class AssignStmt extends ASTList {
@@ -24,23 +25,19 @@ public class AssignStmt extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         ASTree dest = name();
-        Rock val = value().eval(env);
-        Logger.log(dest + " << " + val);
+        Rock val = value().eval(env, null);
+        Logger.log(dest + " = " + val);
 
-
-        if (dest instanceof Name || dest instanceof Primary) {
-            Proxy name = dest.proxy(env, null);
-            name.set(val);
-            return val;
-        } else {
-            throw new UnsupportedASTException(dest.getClass().getName(), Name.class.getName(), Primary.class.getName());
-        }
+        dest.set(env, null, val);
+        return val;
     }
 
     @Override
-    public String toString() {
-        return name() + " = " + value();
+    public void write(IndentationPrinter printer) {
+        name().write(printer);
+        printer.print(" = ");
+        value().write(printer);
     }
 }

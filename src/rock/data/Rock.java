@@ -21,8 +21,9 @@ public abstract class Rock implements Environment {
         return get((Object) key);
     }
 
-    public abstract Rock member(String mem) throws RockException;
-    public abstract Rock member(String mem, Rock value) throws RockException;
+    public abstract Rock getMember(String mem) throws RockException;
+
+    public abstract Rock setMember(String mem, Rock value) throws RockException;
 
     public abstract boolean support(String op, Rock another);
 
@@ -31,6 +32,14 @@ public abstract class Rock implements Environment {
     public abstract Environment env() throws RockException;
 
     public abstract RockType type();
+
+    public abstract int asInt() throws RockException;
+
+    public abstract double asDecimal() throws RockException;
+
+    public abstract boolean asBoolean() throws RockException;
+
+    public abstract String asString() throws RockException;
 
 
 

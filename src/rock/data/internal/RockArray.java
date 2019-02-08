@@ -33,6 +33,11 @@ public class RockArray extends RockAdapter {
     }
 
     @Override
+    public boolean asBoolean() throws RockException {
+        return true;
+    }
+
+    @Override
     public Environment env() throws RockException {
         return null;
     }
@@ -48,7 +53,7 @@ public class RockArray extends RockAdapter {
     }
 
     @Override
-    public Rock member(String mem) throws RockException {
+    public Rock getMember(String mem) throws RockException {
         switch (mem) {
             case "length": return new RockInteger(list.size());
             case "get": return getter;
@@ -57,7 +62,7 @@ public class RockArray extends RockAdapter {
             case "add": return adder;
             case "remove": return remover;
         }
-        throw new RockException("cannot get member: " + mem);
+        throw new RockException("cannot get setMember: " + mem);
     }
 
     @Override

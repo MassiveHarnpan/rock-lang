@@ -9,18 +9,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class RockDictionary extends Rock {
+public class RockDictionary extends RockAdapter {
 
     private Map<Object, Rock> values = new HashMap<>();
 
     @Override
-    public Rock member(String mem) throws RockException {
-        throw new RockException("cannot get member of a dictionary: "+ toString());
+    public Rock getMember(String mem) throws RockException {
+        throw new RockException("cannot get setMember of a dictionary: "+ toString());
     }
 
     @Override
-    public Rock member(String mem, Rock value) throws RockException {
-        throw new RockException("cannot set member of a dictionary: "+ toString());
+    public Rock setMember(String mem, Rock value) throws RockException {
+        throw new RockException("cannot set setMember of a dictionary: "+ toString());
     }
 
     @Override

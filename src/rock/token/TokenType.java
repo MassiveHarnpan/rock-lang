@@ -3,7 +3,8 @@ package rock.token;
 public enum TokenType {
 
     STRING,
-    NUMBER,
+    INTEGER,
+    DECIMAL,
     NIL,
     IDENTIFIER,
     NAME,

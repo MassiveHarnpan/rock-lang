@@ -17,4 +17,9 @@ public class IdToken extends Token {
     public Object value() {
         return text;
     }
+
+    @Override
+    public String toString() {
+        return text;
+    }
 }

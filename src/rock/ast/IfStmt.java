@@ -3,10 +3,14 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.data.internal.RockInteger;
+import rock.data.internal.RockNil;
 import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 public class IfStmt extends ASTList {
+
+    public static final ASTListFactory FACTORY = elements -> new IfStmt(elements);
 
     public IfStmt(ASTree... children) {
         super(children);
@@ -26,22 +30,27 @@ public class IfStmt extends ASTList {
 
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        if (!RockInteger.FALSE.equals(condition().eval(env))) {
-            return thenBlock().eval(env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        if (condition().eval(env, base).asBoolean()) {
+            return thenBlock().eval(env, base);
         } else {
             ASTree elseBlock = elseBlock();
-            return elseBlock == null ? null : elseBlock.eval(env);
+            return elseBlock == null ? RockNil.INSTANCE : elseBlock.eval(env, base);
         }
     }
 
+
+
     @Override
-    public String toString(int indent, String space) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(RockString.repeat(indent, space)).append("if ").append(condition()).append(" ").append(thenBlock().toString(indent, space));
-        if (childCount() > 2) {
-            sb.append(" else ").append(elseBlock().toString(indent, space));
+    public void write(IndentationPrinter printer) {
+        printer.print("if (");
+        condition().write(printer);
+        printer.print(") ");
+        thenBlock().write(printer);
+        ASTree elseBlock = elseBlock();
+        if (elseBlock != null) {
+            printer.print(" else ");
+            elseBlock.write(printer);
         }
-        return sb.toString();
     }
 }

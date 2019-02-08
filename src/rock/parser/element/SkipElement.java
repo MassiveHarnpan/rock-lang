@@ -25,6 +25,6 @@ public class SkipElement extends NonTerminalElement {
     @Override
     protected boolean doParse(Lexer lexer, List<ASTree> res) throws ParseException {
         List<ASTree> list = new ArrayList<>();
-        return  (element.parse(lexer, list));
+        return element.parse(lexer, list);
     }
 }

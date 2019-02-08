@@ -37,12 +37,14 @@ public class Token {
         return offsetNumber;
     }
 
-    // only for number token
-    public Number getNum() throws RockException {
-        throw new RockException("Not a number token");
+    public int getInt() throws RockException {
+        throw new RockException("Not a integer token");
     }
 
-    // For Identifier or String Token
+    public double getDec() throws RockException {
+        throw new RockException("Not a decimal token");
+    }
+
     public String getStr() {
         return literal;
     }
@@ -57,6 +59,7 @@ public class Token {
 
     @Override
     public String toString() {
-        return "{type=" + getClass().getSimpleName() + ", literal=" + literal + ", value=" + value() + "}";
+        //return "{type=" + getClass().getSimpleName() + ", literal=" + literal + ", value=" + value() + "}";
+        return String.valueOf(value());
     }
 }

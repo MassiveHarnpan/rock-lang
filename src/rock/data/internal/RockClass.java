@@ -26,6 +26,11 @@ public class RockClass extends RockAdapter {
         return RockType.CLS;
     }
 
+    @Override
+    public boolean asBoolean() throws RockException {
+        return true;
+    }
+
     public String name() {
         return name;
     }
@@ -50,7 +55,7 @@ public class RockClass extends RockAdapter {
         if (superClass != null) {
             superClass.initObject(ro);
         }
-        body.eval(ro.env());
+        body.eval(ro.env(), ro);
     }
 
 
@@ -70,7 +75,7 @@ public class RockClass extends RockAdapter {
     }
 
     @Override
-    public Rock member(String key) throws RockException {
+    public Rock getMember(String key) throws RockException {
         if (!(key instanceof String)) {
             throw new RockException("the name of a constructor must be a string");
         }

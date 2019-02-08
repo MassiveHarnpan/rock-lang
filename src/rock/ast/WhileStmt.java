@@ -7,8 +7,11 @@ import rock.data.internal.RockFunction;
 import rock.data.internal.RockInteger;
 import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 public class WhileStmt extends ASTList {
+
+    public static final ASTListFactory FACTORY = elements -> new WhileStmt(elements);
 
     public WhileStmt(ASTree... children) {
         super(children);
@@ -26,18 +29,21 @@ public class WhileStmt extends ASTList {
 
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         ASTree cond =  condition();
         ASTree body = body();
         Rock result = null;
-        while (!RockInteger.FALSE.equals(cond.eval(env))) {
-            result = body.eval(env);
+        while (cond.eval(env, base).asBoolean()) {
+            result = body.eval(env, base);
         }
         return result;
     }
 
     @Override
-    public String toString(int indent, String space) {
-        return RockString.repeat(indent, space) + "while " + condition() + " " + body().toString(indent, space);
+    public void write(IndentationPrinter printer) {
+        printer.print("while (");
+        condition().write(printer);
+        printer.print(") ");
+        body().write(printer);
     }
 }

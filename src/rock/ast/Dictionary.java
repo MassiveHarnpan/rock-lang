@@ -14,12 +14,12 @@ public class Dictionary extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         RockDictionary dict = new RockDictionary();
 
         for (int i = 0; i < childCount(); i += 2) {
             String key = ((Name) child(i)).name();
-            Rock value = child(i + 1).eval(env);
+            Rock value = child(i + 1).eval(env, base);
             dict.set(key, value);
         }
 

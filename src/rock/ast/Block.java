@@ -5,6 +5,7 @@ import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 import java.util.Iterator;
 
@@ -17,10 +18,10 @@ public class Block extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         Rock result = null;
         for (Iterator<ASTree> it = iterator(); it.hasNext(); ) {
-            result = it.next().eval(env);
+            result = it.next().eval(env, base);
         }
         return result;
     }
@@ -41,28 +42,18 @@ public class Block extends ASTList {
     }
 
     @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("{");
+    public void write(IndentationPrinter printer) {
+        printer.print("{");
+        printer.levelUp();
         Iterator<ASTree> itr = children.iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next().toString());
-            if (itr.hasNext()) {
-                sb.append("; ");
-            }
+            printer.ln();
+            itr.next().write(printer);
+            printer.print(";");
         }
-        return sb.append('}').toString();
+        printer.leveldown();
+        printer.println('}');
     }
 
-    @Override
-    public String toString(int indent, String space) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("{\n");
-        Iterator<ASTree> itr = children.iterator();
-        while (itr.hasNext()) {
-            sb.append(itr.next().toString(indent + 1, space));
-            sb.append('\n');
-        }
-        return sb.append(RockString.repeat(indent, space)).append('}').toString();
-    }
+
 }

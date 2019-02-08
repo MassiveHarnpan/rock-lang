@@ -4,6 +4,7 @@ import rock.data.Environment;
 import rock.data.Proxy;
 import rock.data.Rock;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 import java.util.Iterator;
 
@@ -16,15 +17,22 @@ public class Settable extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        // TODO
-        return super.eval(env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        Rock rock = base;
+        for (int i = 0; i < childCount(); i++) {
+            rock = child(i).eval(env, rock);
+        }
+        return rock;
     }
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
-        // TODO
-        return super.proxy(env, base);
+    public Rock set(Environment env, Rock base, Rock value) throws RockException {
+        Rock rock = base;
+        for (int i = 0; i < childCount() - 1; i++) {
+            rock = child(i).eval(env, rock);
+        }
+        String name = child(childCount() - 1).token().literal();
+        return base == null ? env.set(name, value) : base.set(name, value);
     }
 
 
@@ -37,5 +45,13 @@ public class Settable extends ASTList {
             builder.append(itr.next());
         }
         return builder.toString();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        Iterator<ASTree> itr = iterator();
+        while (itr.hasNext()) {
+            itr.next().write(printer);
+        }
     }
 }

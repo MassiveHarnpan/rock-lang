@@ -15,9 +15,12 @@ public class Gettable extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        // TODO
-        return super.eval(env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        Rock rock = base;
+        for (int i = 0; i < childCount(); i++) {
+            rock = child(i).eval(env, rock);
+        }
+        return rock;
     }
 
     @Override

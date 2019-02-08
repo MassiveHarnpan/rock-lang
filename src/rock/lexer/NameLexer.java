@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NameLexer implements ILexer {
     @Override
-    public Token lex(int lineNumber, String s, int start) {
+    public Token read(int lineNumber, String s, int start) {
         int index = start;
         if (!isHead(s.charAt(index))) {
             return null;
@@ -51,7 +51,7 @@ public class NameLexer implements ILexer {
 
         NameLexer lexer = new NameLexer();
 
-        data.forEach(s -> System.out.println(s + "        " + lexer.lex(0, s, 0)));
+        data.forEach(s -> System.out.println(s + "        " + lexer.read(0, s, 0)));
     }
 
 }

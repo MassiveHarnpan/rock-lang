@@ -12,24 +12,14 @@ public class RockNil extends RockAdapter {
         return RockType.NIL;
     }
 
-
     @Override
-    public boolean support(String op, Rock another) {
-        return "==".equals(op) || "!=".equals(op) || another.type() == RockType.STR;
+    public boolean asBoolean() throws RockException {
+        return false;
     }
 
     @Override
-    public Rock compute(String op, Rock another) throws RockException {
-        if ("==".equals(op)) {
-            return another == this ? RockInteger.TRUE : RockInteger.FALSE;
-        }
-        if ("!=".equals(op)) {
-            return another != this ? RockInteger.TRUE : RockInteger.FALSE;
-        }
-        if (another.type() == RockType.STR) {
-            return new RockString(this.toString() + another.getJavaPrototype());
-        }
-        return super.compute(op, another);
+    public String asString() throws RockException {
+        return "nil";
     }
 
     @Override

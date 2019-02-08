@@ -9,13 +9,13 @@ public class RockAdapter extends Rock {
 
 
     @Override
-    public Rock member(String mem) throws RockException {
-        throw new RockException("cannot get member of " + toString());
+    public Rock getMember(String mem) throws RockException {
+        throw new RockException("cannot get setMember of " + toString());
     }
 
     @Override
-    public Rock member(String mem, Rock value) throws RockException {
-        throw new RockException("cannot set member of " + toString());
+    public Rock setMember(String mem, Rock value) throws RockException {
+        throw new RockException("cannot set setMember of " + toString());
     }
 
     @Override
@@ -36,6 +36,26 @@ public class RockAdapter extends Rock {
     @Override
     public RockType type() {
         return null;
+    }
+
+    @Override
+    public int asInt() throws RockException {
+        throw new RockException("cannot cast " + toString() + " to int");
+    }
+
+    @Override
+    public double asDecimal() throws RockException {
+        throw new RockException("cannot cast " + toString() + " to decimal");
+    }
+
+    @Override
+    public boolean asBoolean() throws RockException {
+        throw new RockException("cannot cast " + toString() + " to boolean");
+    }
+
+    @Override
+    public String asString() throws RockException {
+        return toString();
     }
 
     @Override

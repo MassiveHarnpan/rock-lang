@@ -1,12 +1,13 @@
 package rock.ast;
 
-import rock.data.*;
+import rock.data.Environment;
+import rock.data.Rock;
 import rock.data.internal.RockDecimal;
 import rock.data.internal.RockInteger;
 import rock.data.internal.RockString;
 import rock.exception.RockException;
-import rock.exception.UnsupportedOperationException;
 import rock.token.Token;
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
 
 public class ASTLeaf extends ASTree {
@@ -19,6 +20,11 @@ public class ASTLeaf extends ASTree {
     }
 
     @Override
+    public Token token() {
+        return token;
+    }
+
+    @Override
     public ASTree child(int i) {
         return null;
     }
@@ -28,24 +34,26 @@ public class ASTLeaf extends ASTree {
         return 0;
     }
 
+    private Rock cache = null;
+
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         Object value = token.value();
         Logger.log(value + " instanceof "+value.getClass().getSimpleName());
-        if (value instanceof Integer) {
-            return new RockInteger((Integer) value);
-        } else if (value instanceof Double) {
-            return new RockDecimal((Double) value);
-        } else if (value instanceof String) {
-            return new RockString((String) value);
-        } else {
-            return null;
+        if (cache != null) {
+            return cache;
         }
+        switch (token.type()) {
+            case INTEGER: cache = new RockInteger(token.getInt()); return cache;
+            case DECIMAL: cache = new RockDecimal(token.getDec()); return cache;
+            case STRING: cache = new RockString(token.getStr()); return cache;
+        }
+        throw new RockException("cannot get value of " + token);
     }
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
-        return new InstanceProxy(eval(env));
+    public Rock set(Environment env, Rock base, Rock value) throws RockException {
+        throw new RockException("cannot set to a literal value: " + token);
     }
 
 
@@ -55,12 +63,13 @@ public class ASTLeaf extends ASTree {
         this.token = token;
     }
 
-    protected Token token() {
-        return token;
-    }
-
     @Override
     public String toString() {
         return token.literal().replace("\n", "#EOL");
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        printer.print(token.toString());
     }
 }

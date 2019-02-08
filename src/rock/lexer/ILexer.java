@@ -6,6 +6,6 @@ import java.io.Reader;
 
 public interface ILexer {
 
-    Token lex(int lineNumber, String s, int start);
+    Token read(int lineNumber, String s, int start);
 
 }

@@ -102,8 +102,13 @@ public class Parser extends NonTerminalElement {
         return this;
     }
 
-    public Parser number() {
-        add(new TokenElement(TokenType.NUMBER));
+    public Parser integer() {
+        add(new TokenElement(TokenType.INTEGER));
+        return this;
+    }
+
+    public Parser decimal() {
+        add(new TokenElement(TokenType.DECIMAL));
         return this;
     }
 

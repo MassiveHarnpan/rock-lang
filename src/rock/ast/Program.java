@@ -1,5 +1,6 @@
 package rock.ast;
 
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
 
 import java.util.Arrays;
@@ -30,15 +31,24 @@ public class Program extends ASTList {
 
     @Override
     public String toString() {
-        Logger.log("Program.toString");
-        StringBuffer sb = new StringBuffer();
+        Logger.log("Program.write");
+        IndentationPrinter printer = new IndentationPrinter();
+        write(printer);
+        return printer.toString();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
         Iterator<ASTree> itr = children.iterator();
-        while (itr.hasNext()) {
-            sb.append(itr.next()).append(';');
-            if (itr.hasNext()) {
-                sb.append('\n');
-            }
+        if (itr.hasNext()) {
+            printer.ln();
+            itr.next().write(printer);
+            printer.print(";");
         }
-        return sb.toString();
+        while (itr.hasNext()) {
+            printer.ln();
+            itr.next().write(printer);
+            printer.print(";");
+        }
     }
 }

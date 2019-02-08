@@ -1,10 +1,18 @@
 package rock.parser;
 
 import rock.ast.*;
+import rock.data.Environment;
+import rock.data.Evaluator;
+import rock.data.NestedEnvironment;
+import rock.data.Rock;
+import rock.data.internal.RockFunction;
+import rock.data.internal.RockNil;
 import rock.exception.ParseException;
+import rock.exception.RockException;
 import rock.lexer.Lexer;
 import rock.parser.element.Element;
 import rock.parser.element.ForkElement;
+import rock.parser.element.SequenceElement;
 import rock.parser.element.TokenElement;
 import rock.token.Token;
 import rock.token.TokenType;
@@ -24,20 +32,23 @@ public class RockParser extends Parser {
         super(Program.FACTORY, "rock");
 
         Element name = new TokenElement(Name.FACTORY, TokenType.NAME);
-        Element number = new TokenElement(TokenType.NUMBER);
+        Element number =  new ForkElement().or(new TokenElement(TokenType.INTEGER)).or(new TokenElement(TokenType.DECIMAL));
         Element string = new TokenElement(TokenType.STRING);
-        Element comment = new TokenElement(TokenType.COMMENT);
+        Parser lambda = new Parser(Lambda.FACTORY);
 
         Element boolOps = sign(">", "<", ">=", "<=", "==", "!=", "&", "|");
         Element termOps = sign("+", "-");
-        Element factorOps = sign("*", "/", "^", "..");
+        Element factorOps = sign("*", "/", "^");
 
         Element primary = new ForkElement()
+                .or(lambda)
                 .or(name)
                 .or(number)
                 .or(string);
 
         ForkElement valuable = new ForkElement();
+        ForkElement flow = new ForkElement();
+        ForkElement stmt = new ForkElement();
 
         Parser arguments = new Parser(Arguments.FACTORY, "arguments").sep("(").repeat(valuable, split(","), false).sep(")").asAST();
         Parser dot = new Parser(Dot.FACTORY, "dot").sep(".").then(name).asAST();
@@ -62,15 +73,31 @@ public class RockParser extends Parser {
         Parser bool = new Parser(Expr.FACTORY, "bool").repeat(term, termOps, true).asAST();
         Parser expr = new Parser(Expr.FACTORY, "expr").repeat(bool, boolOps, true).asAST();
 
+        Parser block = new Parser(Block.FACTORY).sep("{").repeat(stmt, false).sep("}").asAST();
+
+
         Parser assign = new Parser(AssignStmt.FACTORY, "assign").then(settable).sep("=").then(valuable).asAST();
 
+        SequenceElement valuableStmt = new SequenceElement(valuable, split(";"));
+
+        Parser ifStmt = new Parser(IfStmt.FACTORY).sep("if").sep("(").then(valuable).sep(")")
+                .then(block).then(maybe(new SequenceElement(split("else"), block))).asAST();
+
+        Parser whileStmt = new Parser(WhileStmt.FACTORY).sep("while").sep("(").then(valuable).sep(")").then(block).asAST();
+
         valuable.or(assign).or(expr);
+        flow.or(ifStmt).or(whileStmt);
+        stmt.or(flow).or(valuableStmt);
+
+        Parser params = new Parser(ASTList.FACTORY).repeat(name, false).asAST();
+        Parser funcDef = new Parser(FuncDef.FACTORY).sep("def").then(name).sep("(").then(params).sep(")").then(block).asAST();
+        lambda.sep("(").then(params).sep(")").sep("->").then(block).asAST();
 
         ForkElement progStmt = new ForkElement()
-                .or(valuable)
-                .or(maybe(skip(comment)));
+                .or(funcDef)
+                .or(stmt);
 
-        this.program = new Parser(Program.FACTORY, "program").repeat(maybe(progStmt), split(";"), false).asAST();
+        this.program = new Parser(Program.FACTORY, "program").repeat(new ForkElement().or(progStmt).or(split(";")), false).asAST();
 
     }
 
@@ -104,10 +131,10 @@ public class RockParser extends Parser {
 //        data.add("name = 89 +8 * 5.5");
 //        data.add("result = 89 +8 * 5.5 >= 95");
 //        data.add("result = -89 +8 * -5.5 >= 95");
-//        data.add("result = value.toString()");
+//        data.add("result = value.write()");
 //        data.add("result = value.doSth(sth1, sth2)");
 //        data.add("result = value.doSth(45, 777777)");
-//        data.add("result = var1.innerData[1].toString()");
+//        data.add("result = var1.innerData[1].write()");
 //        data.add("result = var1.innerData[\"invokable\"].method(arg1, arg2)");
 //        data.add("result = pro =  var1.innerData[\"invokable\"].method(arg1, arg2)");
 //
@@ -123,11 +150,27 @@ public class RockParser extends Parser {
 //            }
 //        });
 
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(new File("test/test1.roc")), "UTF-8")) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(new File("test/test2.roc")), "UTF-8")) {
             Lexer lexer = new Lexer(reader);
 
             RockParser parser = new RockParser();
-            System.out.println(parser.parse(lexer));
+            ASTree ast = parser.parse(lexer);
+            System.out.println(ast);
+            NestedEnvironment env = new NestedEnvironment();
+            env.set("print", new RockFunction("print", new String[]{"obj"}, new Evaluator() {
+                @Override
+                public Rock eval(Environment env, Rock base) throws RockException {
+                    System.out.println(env.get("obj").asString());
+                    return RockNil.INSTANCE;
+                }
+
+                @Override
+                public Rock set(Environment env, Rock base, Rock value) throws RockException {
+                    return RockNil.INSTANCE;
+                }
+            }, env));
+            System.out.println(ast.eval(env, null));
+            //System.out.println(parser.parse(lexer).eval(new NestedEnvironment(), null));
         } catch (Exception e) {
             e.printStackTrace();
         }

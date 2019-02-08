@@ -27,30 +27,26 @@ public class RockObject extends RockAdapter {
     }
 
     @Override
-    public Rock member(String mem) throws RockException {
+    public Rock getMember(String mem) throws RockException {
         Environment e = env.locate(mem);
         if (e != env) {
-            throw new RockException("cannot get member: " + mem);
+            throw new RockException("cannot get setMember: " + mem);
         }
         return env.localGet(mem);
     }
 
     @Override
-    public Rock member(String mem, Rock value) throws RockException {
+    public Rock setMember(String mem, Rock value) throws RockException {
         Environment e = env.locate(mem);
         if (e != env) {
-            throw new RockException("cannot get member: " + mem);
+            throw new RockException("cannot get setMember: " + mem);
         }
         return env.localSet(mem, value);
     }
 
     @Override
-    public Rock compute(String op, Rock another) throws RockException {
-        Rock func = env.get(COMPUTE);
-        if (func != null) {
-            return func.invoke(new RockString(op), another);
-        }
-        return super.compute(op, another);
+    public boolean asBoolean() throws RockException {
+        return true;
     }
 
     @Override

@@ -20,9 +20,9 @@ public class Index extends ASTList{
     }
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
-        Object key = index().eval(env).getJavaPrototype();
-        return new EnvProxy(base, key);
+    public Rock set(Environment env, Rock base, Rock value) throws RockException {
+        Object key = index().eval(env, base).getJavaPrototype();
+        return base.set(key, value);
     }
 
     @Override

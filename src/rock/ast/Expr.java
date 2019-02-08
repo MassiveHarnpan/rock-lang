@@ -4,7 +4,9 @@ import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
+import rock.util.Operators;
 
 import java.util.Iterator;
 
@@ -18,8 +20,8 @@ public class Expr extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        Rock leftVal = child(0).eval(env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        Rock leftVal = child(0).eval(env, base);
         Logger.log("leftVal = " + leftVal);
         if (childCount() == 1) {
             return leftVal;
@@ -27,32 +29,23 @@ public class Expr extends ASTList {
         int index = 1;
         String msg;
         while (index < childCount() - 1) {
-            String operator = ((ASTLeaf) child(index++)).token().literal();
-            Rock rightVal = child(index++).eval(env);
-            if (!leftVal.support(operator, rightVal)) {
-                throw new UnsupportedOperationException(operator, leftVal.toString(), rightVal.toString());
-            }
+            String operator = child(index++).token().literal();
+            Rock rightVal = child(index++).eval(env, base);
             msg = leftVal + " " + operator + " " + rightVal + " = ";
-            leftVal = leftVal.compute(operator, rightVal);
+            leftVal = Operators.compute(leftVal, operator, rightVal);
             Logger.log(msg + leftVal);
         }
         return leftVal;
     }
 
     @Override
-    public String toString() {
-        if (childCount() == 1) {
-            return child(0).toString();
-        }
-        StringBuffer sb = new StringBuffer();
-        sb.append("(");
+    public void write(IndentationPrinter printer) {
         Iterator<ASTree> itr = iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next());
+            itr.next().write(printer);
             if (itr.hasNext()) {
-                sb.append(" ");
+                printer.print(" ");
             }
         }
-        return sb.append(")").toString();
     }
 }

@@ -11,4 +11,9 @@ public class NameToken extends Token {
     public Object value() {
         return literal();
     }
+
+    @Override
+    public String toString() {
+        return literal();
+    }
 }

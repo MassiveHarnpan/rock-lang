@@ -3,9 +3,12 @@ package rock.data.internal;
 import rock.data.Rock;
 import rock.exception.RockException;
 
-public class RockString extends RockLiteral {
+public class RockString extends RockAdapter {
+
+    private String value;
+
     public RockString(String value) {
-        super(value);
+        this.value = value;
     }
 
     @Override
@@ -14,31 +17,14 @@ public class RockString extends RockLiteral {
     }
 
     @Override
-    public boolean support(String op, Rock another) {
-        if ("+".equals(op)) {
-            return true;
-        }
-        if ("*".equals(op) && another.type() == RockType.INT) {
-            return true;
-        }
-        return false;
+    public boolean asBoolean() throws RockException {
+        return !value.isEmpty();
     }
 
     @Override
-    public Rock compute(String op, Rock another) throws RockException {
-        String left = (String) getJavaPrototype();
-        Object right = another.hasJavaPrototype() ? another.getJavaPrototype() : another;
-        if ("+".equals(op)) {
-            return new RockString(left + right);
-        } else if ("*".equals(op) && right instanceof Integer) {
-            int times = (int) right;
-            return new RockString(repeat(times, left));
-        }
-        return super.compute(op, another);
+    public String asString() throws RockException {
+        return value;
     }
-
-
-
 
     public static String repeat(int times, String s) {
         if (times < 0) {
@@ -54,5 +40,10 @@ public class RockString extends RockLiteral {
             sb.append(s);
         }
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return '\"' + value.replaceAll("\"", "\\\"").replaceAll("\n", "\\\n") + '\"';
     }
 }

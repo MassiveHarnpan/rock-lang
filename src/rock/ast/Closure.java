@@ -26,23 +26,9 @@ public class Closure extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) {
+    public Rock eval(Environment env, Rock base) {
         RockFunction func = new RockFunction(null, params(), body(), env);
         //Logger.log("get fun " + func);
         return func;
-    }
-
-    @Override
-    public String toString(int indent, String space) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("fun ").append("(");
-        String[] params = params();
-        if (params.length > 0) {
-            sb.append(params[0]);
-            for (int i = 1; i < params.length; i++) {
-                sb.append(", ").append(params[i]);
-            }
-        }
-        return sb.append(") ").append(body().toString(indent, space)).toString();
     }
 }

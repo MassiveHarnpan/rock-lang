@@ -1,10 +1,12 @@
 package rock.ast;
 
 import rock.data.Environment;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockFunction;
 import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
 
 import java.util.ArrayList;
@@ -20,14 +22,14 @@ public class FuncDef extends ASTList {
     }
 
     public String name() {
-        return ((ASTLeaf) child(0)).token().literal();
+        return child(0).token().literal();
     }
 
     public List<String> params() {
         ASTree ast = child(1);
         List<String> params = new ArrayList<>(ast.childCount());
         for (int i = 0; i < ast.childCount(); i++) {
-            params.add(((ASTLeaf) ast.child(i)).token().literal());
+            params.add(ast.child(i).token().literal());
         }
         return params;
     }
@@ -37,24 +39,28 @@ public class FuncDef extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        RockFunction func = new RockFunction(name(), params().toArray(new String[params().size()]), body(), env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        String name = name();
+        List<String> params = params();
+        NestedEnvironment environment = new NestedEnvironment(env);
+        environment.set("__function_name__", new RockString(name));
+        RockFunction func = new RockFunction(name, params.toArray(new String[params.size()]), body(), environment);
         Logger.log("put " + func);
-        return env.set(func.name(), func);
+        return env.set(name, func);
     }
 
     @Override
-    public String toString(int indent, String space) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(RockString.repeat(indent, space)).append("def ").append(name()).append(" (");
-        Iterator<String> itr = params().iterator();
+    public void write(IndentationPrinter printer) {
+        printer.print("def ").print(name()).print("(");
+        ASTList params = (ASTList) child(1);
+        Iterator<ASTree> itr = params.iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next());
+            itr.next().write(printer);
             if (itr.hasNext()) {
-                sb.append(", ");
+                printer.print(", ");
             }
         }
-        sb.append(") ").append(body().toString(indent, space));
-        return sb.toString();
+        printer.print(") ");
+        body().write(printer);
     }
 }

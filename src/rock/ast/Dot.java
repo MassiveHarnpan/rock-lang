@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.*;
 import rock.exception.RockException;
 import rock.exception.UnsupportedASTException;
+import rock.util.IndentationPrinter;
 
 public class Dot extends ASTList {
 
@@ -18,12 +19,17 @@ public class Dot extends ASTList {
 
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
-        return new MemberProxy(base, name());
+    public Rock set(Environment env, Rock base, Rock value) throws RockException {
+        return base.setMember(name(), value);
     }
 
     @Override
     public String toString() {
         return "." + name();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        printer.print(".").print(name());
     }
 }

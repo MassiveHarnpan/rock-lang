@@ -1,14 +1,20 @@
 package rock.ast;
 
 import rock.data.Environment;
+import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockFunction;
+import rock.data.internal.RockString;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 import rock.util.Logger;
 
 import java.util.Arrays;
 
 public class Lambda extends ASTList {
+
+    public static final ASTListFactory FACTORY = (elements) -> new Lambda(elements);
+
     public Lambda(ASTree... children) {
         super(children);
     }
@@ -27,8 +33,10 @@ public class Lambda extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        return new RockFunction(null, params(), body(), env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        NestedEnvironment environment = new NestedEnvironment(env);
+        environment.set("__function_name__", new RockString("$lambda$"));
+        return new RockFunction("$lambda$", params(), body(), environment);
     }
 
     @Override
@@ -48,5 +56,19 @@ public class Lambda extends ASTList {
             sb.append(")");
         }
         return sb.append(" -> ").append(body()).toString();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        ASTree params = child(0);
+        printer.print("(");
+        for (int i = 0; i < params.childCount(); i++) {
+            params.child(i).write(printer);
+            if (i < params.childCount() - 1) {
+                printer.print(", ");
+            }
+        }
+        printer.print(") -> ");
+        body().write(printer);
     }
 }

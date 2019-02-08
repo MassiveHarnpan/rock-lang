@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StringLexer implements ILexer {
     @Override
-    public Token lex(int lineNumber, String s, int start) {
+    public Token read(int lineNumber, String s, int start) {
         int index = start;
         if (s.charAt(index) != '\"') {
             return null;
@@ -53,7 +53,7 @@ public class StringLexer implements ILexer {
         data.add("\"Hello\\\" World\"   ");
         StringLexer lexer = new StringLexer();
 
-        data.forEach(s -> System.out.println(s + "        " + lexer.lex(0, s, 0)));
+        data.forEach(s -> System.out.println(s + "        " + lexer.read(0, s, 0)));
     }
 
 }

@@ -11,10 +11,25 @@ public class RockException extends Exception {
         if (token == Token.EOF) {
             return "EOF";
         } else {
-            return "\"" + token.getStr() + "\" at line:" + token.getLineNumber();
+            return "\"" + token.literal() + "\" (" + token.getLineNumber() + ":" + token.getOffsetNumber()+ ")";
         }
     }
 
+    private Token token;
+
+    public Token getToken() {
+        return token;
+    }
+
+    public RockException(Token token) {
+        super("bad token at " + location(token));
+        this.token = token;
+    }
+
+    public RockException(String message, Token token) {
+        super(message + " at " + location(token));
+        this.token = token;
+    }
 
     public RockException(String m) {
         super(m);

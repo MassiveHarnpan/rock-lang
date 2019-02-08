@@ -25,7 +25,7 @@ public class ClassDef extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         RockClass superClass = null;
         String superClassName = superClassName();
         if (superClassName != null) {
@@ -37,16 +37,5 @@ public class ClassDef extends ASTList {
         }
         RockClass newClass = new RockClass(name(), superClass, body(), env);
         return env.set(newClass.name(), newClass);
-    }
-
-    @Override
-    public String toString(int indent, String space) {
-        String s = superClassName();
-        if (s == null) {
-            s = "";
-        } else {
-            s = "extends " + s;
-        }
-        return RockString.repeat(indent, space) + "class " + name() + " " + s + " " + body().toString(indent, space);
     }
 }

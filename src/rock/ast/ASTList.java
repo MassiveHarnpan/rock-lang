@@ -3,6 +3,8 @@ package rock.ast;
 import rock.data.*;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
+import rock.token.Token;
+import rock.util.IndentationPrinter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,11 @@ public class ASTList extends ASTree {
     }
 
     @Override
+    public Token token() {
+        throw null;
+    }
+
+    @Override
     public ASTree child(int i) {
         return children.get(i);
     }
@@ -35,17 +42,17 @@ public class ASTList extends ASTree {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         Rock result = null;
         for (ASTree ast : children) {
-            result = ast.eval(env);
+            result = ast.eval(env, base);
         }
         return result;
     }
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
-        throw new UnsupportedOperationException("proxy", this.toString());
+    public Rock set(Environment env, Rock base, Rock value) throws RockException {
+        throw new UnsupportedOperationException("set", this.toString());
     }
 
     @Override
@@ -100,5 +107,16 @@ public class ASTList extends ASTree {
             }
         }
         return sb.append(')').toString();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        Iterator<ASTree> itr = children.iterator();
+        while (itr.hasNext()) {
+            itr.next().write(printer);
+            if (itr.hasNext()) {
+                printer.print(" ");
+            }
+        }
     }
 }

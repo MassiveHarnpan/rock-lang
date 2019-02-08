@@ -4,13 +4,15 @@ import rock.data.Rock;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 
-public class RockInteger extends RockLiteral {
+public class RockInteger extends RockAdapter {
 
     public static final RockInteger TRUE = new RockInteger(1);
     public static final RockInteger FALSE = new RockInteger(0);
 
-    public RockInteger(Integer value) {
-        super(value);
+    private int value;
+
+    public RockInteger(int value) {
+        this.value = value;
     }
 
     @Override
@@ -18,46 +20,25 @@ public class RockInteger extends RockLiteral {
         return RockType.INT;
     }
 
+
     @Override
-    public boolean support(String op, Rock another) {
-        if (another.type() == RockType.INT || another.type() == RockType.DEC) {
-            return true;
-        }
-        if (another.type() == RockType.STR && ("+".equals(op) || "*".equals(op))) {
-            return true;
-        }
-        return false;
+    public int asInt() throws RockException {
+        return value;
     }
 
     @Override
-    public Rock compute(String op, Rock another) throws RockException {
-        int left = (int) getJavaPrototype();
-        Object o = another.getJavaPrototype();
-        double rst = 0;
-        if (o instanceof Number) {
-            double right = ((Number) o).doubleValue();
-            switch (op) {
-                case "+": rst = left + right;break;
-                case "-": rst = left - right;break;
-                case "*": rst = left * right;break;
-                case "/": rst = left / right;break;
-                case "%": rst = left % right;break;
-                case ">": rst = left > right ? 1 : 0;break;
-                case ">=": rst = left >= right ? 1 : 0;break;
-                case "<": rst = left < right ? 1 : 0;break;
-                case "<=": rst = left <= right ? 1 : 0; break;
-                case "!=": rst = left != right ? 1 : 0; break;
-                case "==": rst = left == right ? 1 : 0; break;
-            }
-            return new RockInteger((int) rst);
-        } else if (o instanceof String) {
-            String right = (String) o;
-            switch (op) {
-                case "+": return new RockString(left + right);
-                case "*": return new RockString(RockString.repeat(left, right));
-            }
-        }
-        throw new UnsupportedOperationException("op", String.valueOf(o));
+    public double asDecimal() throws RockException {
+        return value;
+    }
+
+    @Override
+    public boolean asBoolean() throws RockException {
+        return value != 0;
+    }
+
+    @Override
+    public String asString() throws RockException {
+        return String.valueOf(value);
     }
 
     @Override
@@ -77,5 +58,10 @@ public class RockInteger extends RockLiteral {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 }

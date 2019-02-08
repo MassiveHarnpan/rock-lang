@@ -2,6 +2,7 @@ package rock.ast;
 
 import rock.data.*;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 import java.util.Iterator;
 
@@ -14,25 +15,24 @@ public class Arguments extends ASTList {
     }
 
     @Override
-    public Proxy proxy(Environment env, Rock base) throws RockException {
+    public Rock eval(Environment env, Rock base) throws RockException {
         Rock[] args = new Rock[childCount()];
         for (int i = 0; i < childCount(); i++) {
-            args[i] = child(i).eval(env);
+            args[i] = child(i).eval(env, null);
         }
-        return new InstanceProxy(base.invoke(args));
+        return base.invoke(args);
     }
 
     @Override
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("(");
+    public void write(IndentationPrinter printer) {
+        printer.print("(");
         Iterator<ASTree> itr = iterator();
         while (itr.hasNext()) {
-            sb.append(itr.next());
+            itr.next().write(printer);
             if (itr.hasNext()) {
-                sb.append(", ");
+                printer.print(", ");
             }
         }
-        return sb.append(")").toString();
+        printer.print(")");
     }
 }

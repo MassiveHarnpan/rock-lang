@@ -18,4 +18,9 @@ public class StrToken extends Token {
     public Object value() {
         return str;
     }
+
+    @Override
+    public String toString() {
+        return '\"' + str + '\"';
+    }
 }

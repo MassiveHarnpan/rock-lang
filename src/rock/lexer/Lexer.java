@@ -1,7 +1,7 @@
 package rock.lexer;
 
-import rock.ast.Array;
 import rock.token.Token;
+import rock.token.TokenType;
 
 import java.io.*;
 import java.util.*;
@@ -18,10 +18,41 @@ public class Lexer {
         }
         registerLexer(new CommentLexer());
         registerLexer(new StringLexer());
-        registerLexer(new NumberLexer());
+        registerLexer(new DecimalLexer());
+        registerLexer(new IntegerLexer());
         registerLexer(new IdLexer());
         registerLexer(new NameLexer());
     }
+
+
+    private List<String> lines = new ArrayList<>();
+    private String line;
+    private int lineNumber = 0;
+    private int lineOffset = 0;
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public int getLineOffset() {
+        return lineOffset;
+    }
+
+    public String literalFrom(int startLineNumber, int startLineOffset) {
+        return null;
+    }
+    public boolean hasNext() {return false;}
+    public char next() {return 0;}
+    public boolean read(String s) {return false;}
+    public int readToLineEnd(String s) {return 0;}
+    public String match(String... options) {return null;}
+
+
+
+
+
+
+
 
     private List<Token> parsedTokens = new ArrayList<>();
 
@@ -65,10 +96,12 @@ public class Lexer {
 
         Token token = null;
         for (ILexer lexer : lexers) {
-            token = lexer.lex(lineNumber, line, index);
+            token = lexer.read(lineNumber, line, index);
             if (token != null) {
-                parsedTokens.add(token);
-                System.out.println(token);
+                if (token.type() != TokenType.COMMENT) {
+                    parsedTokens.add(token);
+                }
+                //System.out.println(token);
                 return index + token.literal().length();
             }
         }
@@ -116,6 +149,7 @@ public class Lexer {
         while (index >= parsedTokens.size() && readLine());
         return index < parsedTokens.size();
     }
+
 
     public static void main(String[] args) {
 

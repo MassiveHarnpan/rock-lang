@@ -24,25 +24,15 @@ public class Simple extends ASTList {
     }
 
     @Override
-    public Rock eval(Environment env) throws RockException {
-        Rock func = expr().eval(env);
+    public Rock eval(Environment env, Rock base) throws RockException {
+        Rock func = expr().eval(env, base);
         ASTree args = args();
         Rock[] argarr = new Rock[args.childCount()];
         for (int i = 0; i < argarr.length; i++) {
-            argarr[i] = args.child(i).eval(env);
+            argarr[i] = args.child(i).eval(env, base);
         }
         Logger.log("add args: " + Arrays.asList(argarr));
         return func.invoke(argarr);
     }
 
-    @Override
-    public String toString(int indent, String space) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(RockString.repeat(indent, space)).append("# ").append(expr());
-        ASTree args = args();
-        for (int i = 0; i < args.childCount(); i++) {
-            sb.append(" ").append(args.child(i).toString());
-        }
-        return sb.toString();
-    }
 }

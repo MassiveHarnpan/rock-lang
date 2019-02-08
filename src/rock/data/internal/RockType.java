@@ -3,6 +3,7 @@ package rock.data.internal;
 public enum RockType {
     INT("integer"),
     DEC("decimal"),
+    BOO("boolean"),
     STR("string"),
     FUN("function"),
     CON("constructor"),
