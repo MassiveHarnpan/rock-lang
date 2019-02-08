@@ -1,4 +1,4 @@
-package rock.lexer;
+package rock.util;
 
 import rock.ast.Array;
 
@@ -9,38 +9,21 @@ import java.util.*;
 
 public class LineReader {
 
-
-    public static class Pos {
-        public String name;
-        public int lineNumber;
-        public int lineOffset;
-
-        public Pos(String name, int lineNumber, int lineOffset) {
-            this.name = name;
-            this.lineNumber = lineNumber;
-            this.lineOffset = lineOffset;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + name + ":" + lineNumber + ":" + lineOffset + ")";
-        }
-    }
-
     private String name;
     private Queue<Reader> readers = new LinkedList<>();
     private List<String> lines = new ArrayList<>();
     private String line;
-    private int lineNumber;
-    private int lineOffset;
+    private int lineNumber = 0;
+    private int lineOffset = 0;
     private boolean eof = false; // 流结尾标记，若为真，则不能添加新的Reader
 
-    public LineReader(String name, Reader... readers) {
+    public LineReader(String name, Reader... readers) throws IOException {
         this.name = name;
         this.readers.addAll(Arrays.asList(readers));
+        load();
     }
 
-    public LineReader(Reader... readers) {
+    public LineReader(Reader... readers) throws IOException {
         this("anonymous_input", readers);
     }
 
@@ -67,6 +50,7 @@ public class LineReader {
                 lines.add(line);
             }
         }
+        reset(lineNumber, lineOffset);
         return lineCount < lines.size();
     }
 
@@ -98,12 +82,16 @@ public class LineReader {
     }
 
     public boolean reset(int lineNumber, int lineOffset) {
-        if (lineNumber >= lines.size() || lineOffset >= lines.get(lineNumber).length()) {
+        if (lineNumber > lines.size() || (lineNumber == lines.size() && lineOffset > 0)) {
+            return false;
+        }
+        String line = lineNumber < lines.size() ? lines.get(lineNumber) : null;
+        if (line != null && lineOffset > line.length()) {
             return false;
         }
         this.lineNumber = lineNumber;
         this.lineOffset = lineOffset;
-        this.line = lines.get(lineNumber);
+        this.line = lineNumber >= lines.size() ? null : lines.get(lineNumber);
         return true;
     }
 
@@ -133,26 +121,37 @@ public class LineReader {
         for (int i = startLineNumber + 1; i <= endLineNumber - 1; i++) {
             builder.append(lines.get(i));
         }
-        builder.append(lines.get(endLineNumber), 0, endLineNumber);
+        builder.append(lines.get(endLineNumber), 0, endLineOffset);
         return builder.toString();
     }
 
+    public String substring(int startLineNumber, int startLineOffset) {
+        return substring(startLineNumber, startLineOffset, lineNumber, lineOffset);
+    }
+
+    public String substring(Pos start, Pos end) {
+        return substring(start.lineNumber, start.lineOffset, end.lineNumber, end.lineOffset);
+    }
+
+    public String substring(Pos start) {
+        return substring(start.lineNumber, start.lineOffset, lineNumber, lineOffset);
+    }
 
     public boolean hasMore() {
         return line != null && lineOffset < line.length() + 1;
     }
 
+    public boolean noMore() {
+        return !hasMore();
+    }
+
     // 如果读到行尾，则返回一个换行符
     public char read() {
-        if (lineOffset == line.length()) {
+        if (lineOffset >= line.length()) {
             reset(lineNumber + 1);
             return '\n';
         }
-        char ch = line.charAt(lineOffset);
-        lineOffset++;
-        if (lineOffset > line.length()) {
-            reset(lineNumber + 1);
-        }
+        char ch = line.charAt(lineOffset++);
         return ch;
     }
 

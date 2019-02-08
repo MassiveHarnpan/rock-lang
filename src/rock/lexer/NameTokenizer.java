@@ -2,23 +2,24 @@ package rock.lexer;
 
 import rock.token.NameToken;
 import rock.token.Token;
+import rock.util.LineReader;
+import rock.util.Pos;
+import rock.util.TokenizerTester;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NameLexer implements ILexer {
+public class NameTokenizer extends Tokenizer {
+
     @Override
-    public Token read(int lineNumber, String s, int start) {
-        int index = start;
-        if (!isHead(s.charAt(index))) {
+    public Token read(LineReader reader, Pos start) {
+        if (!isHead(reader.read())) {
             return null;
         }
-        index++;
-        while (index < s.length() && isBody(s.charAt(index))) {
-            index++;
+        while (reader.hasMore() && isBody(reader.peek())) {
+            reader.read();
         }
-        String literal = s.substring(start, index);
-        return new NameToken(lineNumber, start, literal);
+        return new NameToken(start, reader.substring(start));
     }
 
     public static boolean isHead(char ch) {
@@ -49,9 +50,9 @@ public class NameLexer implements ILexer {
         data.add("Greeter ");
         data.add("className ");
 
-        NameLexer lexer = new NameLexer();
+        NameTokenizer lexer = new NameTokenizer();
 
-        data.forEach(s -> System.out.println(s + "        " + lexer.read(0, s, 0)));
+        TokenizerTester.test(data, lexer);
     }
 
 }

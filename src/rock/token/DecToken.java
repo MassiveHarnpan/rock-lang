@@ -1,13 +1,14 @@
 package rock.token;
 
 import rock.exception.RockException;
+import rock.util.Pos;
 
 public class DecToken extends Token {
 
     private double value;
 
-    public DecToken(int lineNumber, int offsetNumber, String literal, double value) {
-        super(lineNumber, offsetNumber, TokenType.DECIMAL, literal);
+    public DecToken(Pos pos, String literal, double value) {
+        super(pos, TokenType.DECIMAL, literal);
         this.value = value;
     }
 

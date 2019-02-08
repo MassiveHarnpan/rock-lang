@@ -1,13 +1,14 @@
 package rock.token;
 
 import rock.exception.RockException;
+import rock.util.Pos;
 
 public class IntToken extends Token {
 
     private int value;
 
-    public IntToken(int lineNumber, int offsetNumber, String literal, int value) {
-        super(lineNumber, offsetNumber, TokenType.INTEGER, literal);
+    public IntToken(Pos pos, String literal, int value) {
+        super(pos, TokenType.INTEGER, literal);
         this.value = value;
     }
 

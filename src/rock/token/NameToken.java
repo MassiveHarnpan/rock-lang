@@ -1,9 +1,11 @@
 package rock.token;
 
+import rock.util.Pos;
+
 public class NameToken extends Token {
 
-    public NameToken(int lineNumber, int offsetNumber, String name) {
-        super(lineNumber, offsetNumber, TokenType.NAME, name);
+    public NameToken(Pos pos, String name) {
+        super(pos, TokenType.NAME, name);
     }
 
 

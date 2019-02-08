@@ -11,7 +11,7 @@ public class RockException extends Exception {
         if (token == Token.EOF) {
             return "EOF";
         } else {
-            return "\"" + token.literal() + "\" (" + token.getLineNumber() + ":" + token.getOffsetNumber()+ ")";
+            return token.literal() + " at " + token.getPos();
         }
     }
 

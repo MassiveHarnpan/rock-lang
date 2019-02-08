@@ -1,21 +1,20 @@
 package rock.token;
 
 import rock.exception.RockException;
+import rock.util.Pos;
 
 public class Token {
-    public static final Token EOF = new Token(-1, -1, TokenType.EOF, "#EOF");
+    public static final Token EOF = new Token(new Pos("$ANY$", -1, -1), TokenType.EOF, "#EOF");
     public static final String EOL = "\n";
 
 
-    private int lineNumber;
-    private int offsetNumber;
+    private Pos pos;
     private String literal;
     private TokenType type = null;
 
 
-    public Token(int lineNumber, int offsetNumber, TokenType type, String literal) {
-        this.lineNumber = lineNumber;
-        this.offsetNumber = offsetNumber;
+    public Token(Pos pos, TokenType type, String literal) {
+        this.pos = pos;
         this.type = type;
         this.literal = literal;
     }
@@ -29,12 +28,8 @@ public class Token {
         return type;
     }
 
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    public int getOffsetNumber() {
-        return offsetNumber;
+    public Pos getPos() {
+        return pos;
     }
 
     public int getInt() throws RockException {

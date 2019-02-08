@@ -1,10 +1,12 @@
 package rock.token;
 
+import rock.util.Pos;
+
 public class IdToken extends Token {
     private String text;
 
-    public IdToken(int lineNumber, int offsetNumber, String text) {
-        super(lineNumber, offsetNumber, TokenType.IDENTIFIER, text);
+    public IdToken(Pos pos, String text) {
+        super(pos, TokenType.IDENTIFIER, text);
         this.text = text;
     }
 

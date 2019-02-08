@@ -16,6 +16,7 @@ import rock.parser.element.SequenceElement;
 import rock.parser.element.TokenElement;
 import rock.token.Token;
 import rock.token.TokenType;
+import rock.util.LineReader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -150,8 +151,10 @@ public class RockParser extends Parser {
 //            }
 //        });
 
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(new File("test/test2.roc")), "UTF-8")) {
-            Lexer lexer = new Lexer(reader);
+        File file = new File("test/test2.roc");
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "UTF-8")) {
+            LineReader lr = new LineReader(file.getName(), reader);
+            Lexer lexer = new Lexer(lr);
 
             RockParser parser = new RockParser();
             ASTree ast = parser.parse(lexer);
