@@ -106,6 +106,15 @@ public class Lexer {
         return index < parsedTokens.size();
     }
 
+    public List<Token> abandon() {
+        reader.abandon(peek().getPos());
+        List<Token> tokens = new ArrayList<>();
+        while (pointer < parsedTokens.size()) {
+            tokens.add(parsedTokens.remove(parsedTokens.size() - 1));
+        }
+        return tokens;
+    }
+
 
     public static void main(String[] args) {
         File file = new File("test/test2.roc");

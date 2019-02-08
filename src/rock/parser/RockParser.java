@@ -41,11 +41,11 @@ public class RockParser extends Parser {
         Element termOps = sign("+", "-");
         Element factorOps = sign("*", "/", "^");
 
-        Element primary = new ForkElement()
-                .or(lambda)
-                .or(name)
-                .or(number)
-                .or(string);
+
+        Parser expr = new Parser(Expr.FACTORY, "expr");
+
+        ForkElement primary = new ForkElement();
+        primary.or(lambda).or(name).or(number).or(string).or(new SequenceElement(split("("), expr, split(")")));
 
         ForkElement valuable = new ForkElement();
         ForkElement flow = new ForkElement();
@@ -72,7 +72,7 @@ public class RockParser extends Parser {
 
         Parser term = new Parser(Expr.FACTORY, "term").repeat(factor, factorOps, true).asAST();
         Parser bool = new Parser(Expr.FACTORY, "bool").repeat(term, termOps, true).asAST();
-        Parser expr = new Parser(Expr.FACTORY, "expr").repeat(bool, boolOps, true).asAST();
+        expr.repeat(bool, boolOps, true).asAST();
 
         Parser block = new Parser(Block.FACTORY).sep("{").repeat(stmt, false).sep("}").asAST();
 

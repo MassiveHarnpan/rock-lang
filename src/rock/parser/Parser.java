@@ -138,10 +138,13 @@ public class Parser extends NonTerminalElement {
     @Override
     public ASTree parse(Lexer lexer) throws ParseException {
         List<ASTree> list = new ArrayList<>();
+        //System.out.println("Parsing: " + name);
         if (sequence.parse(lexer, list)) {
+            //System.out.println("Parse succeeded: " + name);
             ASTList ast = getFactory().create(list.toArray(new ASTree[list.size()]));
             return ast;
         }
+        //System.out.println("Parse failed: " + name);
         return null;
     }
 

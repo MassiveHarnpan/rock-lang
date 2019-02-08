@@ -54,6 +54,50 @@ public class LineReader {
         return lineCount < lines.size();
     }
 
+    // 从指定位置开始，将已载入的内容之后的部分抛弃，包括当前内容也放弃
+    // 并将指针移至指定位置
+    public List<String> abandon(int lineNumber, int lineOffset) {
+        List<String> strings = new ArrayList<>();
+        if (!reset(lineNumber, lineOffset)) {
+            return strings;
+        }
+        if (line == null) {
+            return strings;
+        }
+        while (lineNumber + 1 < lines.size()) {
+            strings.add(lines.remove(lineNumber + 1));
+        }
+        if (lineOffset >= line.length()) {
+            return strings;
+        }
+        String former = line.substring(0, lineOffset);
+        String later = line.substring(lineOffset);
+        line = former;
+        if (!former.isEmpty())  {
+            lines.set(lineNumber, former);
+        } else {
+            lines.remove(lineNumber);
+        }
+        if (!later.isEmpty()) {
+            strings.add(0, later);
+        }
+//
+//        System.out.println(lines);
+//        System.out.println(strings);
+//        System.out.println(checkPoint());
+        return strings;
+    }
+
+    public List<String> abandon(Pos pos) {
+        return abandon(pos.lineNumber, pos.lineOffset);
+    }
+
+
+
+
+
+
+
     public String getLine(int index) {
         return lines.get(index);
     }
