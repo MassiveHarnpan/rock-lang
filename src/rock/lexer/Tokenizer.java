@@ -7,6 +7,9 @@ import rock.util.Pos;
 public abstract class Tokenizer {
 
     public Token next(LineReader reader) {
+        if (!reader.hasMore()) {
+            return null;
+        }
         Pos cp = reader.checkPoint();
         Token token = read(reader, cp);
         if (token == null) {
