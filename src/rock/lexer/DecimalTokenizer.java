@@ -107,8 +107,6 @@ public class DecimalTokenizer extends Tokenizer {
         data.add("0b10011   ");
         data.add("0364   ");
         data.add("00   ");
-        data.add("1255.9_55   ");
-        data.add("1_000_000_000   ");
         DecimalTokenizer lexer = new DecimalTokenizer();
 
 
