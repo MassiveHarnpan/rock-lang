@@ -1,14 +1,31 @@
 package rock.lexer;
 
+import rock.ast.Array;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class LineReader {
+
+
+    public static class Pos {
+        public String name;
+        public int lineNumber;
+        public int lineOffset;
+
+        public Pos(String name, int lineNumber, int lineOffset) {
+            this.name = name;
+            this.lineNumber = lineNumber;
+            this.lineOffset = lineOffset;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + name + ":" + lineNumber + ":" + lineOffset + ")";
+        }
+    }
 
     private String name;
     private Queue<Reader> readers = new LinkedList<>();
@@ -18,12 +35,13 @@ public class LineReader {
     private int lineOffset;
     private boolean eof = false; // 流结尾标记，若为真，则不能添加新的Reader
 
-    public LineReader(String name) {
+    public LineReader(String name, Reader... readers) {
         this.name = name;
+        this.readers.addAll(Arrays.asList(readers));
     }
 
-    public LineReader() {
-        this("anonymous_input");
+    public LineReader(Reader... readers) {
+        this("anonymous_input", readers);
     }
 
 
@@ -57,8 +75,27 @@ public class LineReader {
     }
 
 
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public int getLineOffset() {
+        return lineOffset;
+    }
+
+    public String getName() {
+        return name;
+    }
 
 
+    public Pos checkPoint() {
+        return new Pos(name, lineNumber, lineOffset);
+    }
+
+
+    public boolean reset(Pos pos) {
+        return reset(pos.lineNumber, pos.lineOffset);
+    }
 
     public boolean reset(int lineNumber, int lineOffset) {
         if (lineNumber >= lines.size() || lineOffset >= lines.get(lineNumber).length()) {

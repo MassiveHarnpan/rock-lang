@@ -3,31 +3,35 @@ package rock.lexer;
 import rock.token.CommentToken;
 import rock.token.Token;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentLexer implements ILexer {
+public class CommentLexer extends Tokenizer {
 
     enum Sign {
-        //HASH("#", "\n", true),
-        DOUBLE_SLASH("//", "\n", true),
-        STAR("/*", "*/", false);
+        DOUBLE_SLASH("//", "\n"),
+        STAR("/*", "*/");
 
         String start;
         String end;
-        boolean singleLine;
 
-        Sign(String start, String end, boolean singleLine) {
+        Sign(String start, String end) {
             this.start = start;
             this.end = end;
-            this.singleLine = singleLine;
         }
     }
 
     @Override
-    public Token read(int lineNumber, String s, int start) {
+    public Token read(LineReader reader) {
         for (Sign sign : Sign.values()) {
-            int contentStart = start + sign.start.length();
+            if (!reader.read(sign.start)) {
+                continue;
+            }
+
+            int contentStartLineNumber = reader.getLineNumber();
+            int contentStartLineOffset = reader.getLineOffset();
+
             if (contentStart > s.length() || !s.regionMatches(false, start, sign.start, 0, sign.start.length())) {
                 continue;
             }
@@ -70,6 +74,6 @@ public class CommentLexer implements ILexer {
 
         CommentLexer lexer = new CommentLexer();
 
-        data.forEach(s -> System.out.println((s + "        " + lexer.read(0, s, 0)).replaceAll("\n", "#{EOL}")));
+        data.forEach(s -> System.out.println((s + "        " + lexer.read(new LineReader(new StringReader(s)))).replaceAll("\n", "#{EOL}")));
     }
 }
