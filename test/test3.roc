@@ -20,5 +20,5 @@ g = Greeter.of("Oh ");
 g.greet("Rose");
 g.toString();
 
-import "E:\\Java Projects\\rock-lang\\test\\test2.roc";
+import "test/test2.roc";
 print(fib(10));
