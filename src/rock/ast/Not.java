@@ -1,22 +1,25 @@
 package rock.ast;
 
 import rock.data.Environment;
-import rock.data.NestedEnvironment;
 import rock.data.Rock;
+import rock.data.internal.RockBoolean;
 import rock.data.internal.RockDecimal;
 import rock.data.internal.RockInteger;
 import rock.data.internal.RockType;
 import rock.exception.RockException;
 import rock.exception.UnsupportedOperationException;
 import rock.util.IndentationPrinter;
-import rock.util.Logger;
 
-public class Negative extends ASTList {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final ASTListFactory FACTORY = (elements) -> new Negative(elements);
+public class Not extends ASTList {
 
-    public Negative(ASTree... children) {
-        super(children);
+    public static final ASTListFactory FACTORY = (elements) -> new Not(elements);
+
+
+    public Not(ASTree... elements) {
+        super(elements);
     }
 
     public ASTree origin() {
@@ -26,15 +29,7 @@ public class Negative extends ASTList {
     @Override
     public Rock eval(Environment env, Rock base) throws RockException {
         Rock origin = origin().eval(env, base);
-
-        if (origin.type() == RockType.INT) {
-            return new RockInteger(-origin.asInt());
-        }
-        if (origin.type() == RockType.DEC) {
-            return new RockDecimal(-origin.asDecimal());
-        }
-
-        throw new UnsupportedOperationException("negative", origin.toString());
+        return RockBoolean.valueOf(!origin.asBoolean());
     }
 
     @Override
@@ -44,12 +39,12 @@ public class Negative extends ASTList {
 
     @Override
     public String toString() {
-        return "-" + origin();
+        return "!" + origin();
     }
 
     @Override
     public void write(IndentationPrinter printer) {
-        printer.print("-");
+        printer.print("!");
         origin().write(printer);
     }
 }

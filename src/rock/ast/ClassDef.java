@@ -5,19 +5,23 @@ import rock.data.NestedEnvironment;
 import rock.data.Rock;
 import rock.data.internal.RockClass;
 import rock.data.internal.RockString;
+import rock.data.internal.RockType;
 import rock.exception.RockException;
 
 public class ClassDef extends ASTList {
+
+    public static final ASTListFactory FACTORY = elements -> new ClassDef(elements);
+
     public ClassDef(ASTree... children) {
         super(children);
     }
 
     public String name() {
-        return ((ASTLeaf) child(0)).token().literal();
+        return child(0).token().literal();
     }
 
     public String superClassName() {
-        return childCount() == 3 ? ((Name) child(1)).token().literal() : null;
+        return childCount() == 3 ? child(1).token().literal() : null;
     }
 
     public ASTree body() {
@@ -26,16 +30,17 @@ public class ClassDef extends ASTList {
 
     @Override
     public Rock eval(Environment env, Rock base) throws RockException {
-        RockClass superClass = null;
+
         String superClassName = superClassName();
-        if (superClassName != null) {
-            Object obj = env.get(superClassName());
-            if (obj == null || !(obj instanceof RockClass)) {
-                throw new RockException("cannot find class: " + superClassName);
-            }
-            superClass = (RockClass) obj;
+        String className = name();
+        if (superClassName == null) {
+            superClassName = "Object";
         }
-        RockClass newClass = new RockClass(name(), superClass, body(), env);
+        Rock superClass = env.get(superClassName);
+        if (superClass == null || superClass.type() != RockType.CLS) {
+            throw new RockException("cannot find super class of " + className + ": " + superClassName);
+        }
+        RockClass newClass = new RockClass(className, (RockClass) superClass, body(), env);
         return env.set(newClass.name(), newClass);
     }
 }

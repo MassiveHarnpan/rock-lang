@@ -8,6 +8,7 @@ import rock.exception.ParseException;
 import rock.exception.RockException;
 import rock.lexer.Lexer;
 import rock.parser.RockParser;
+import rock.runtime.RuntimeEnviroumentFactory;
 import rock.token.Token;
 import rock.util.LineReader;
 
@@ -22,13 +23,7 @@ public class ConsoleMain {
 
             RockParser parser = new RockParser();
             ASTree ast = null;
-            NestedEnvironment global = new NestedEnvironment();
-
-            global.set("print", new RockFunction("print", new String[]{"msg"}, NativeMethods.PRINT, global));
-            global.set("time", new RockFunction("time", new String[0], NativeMethods.CURRENT_TIME_MILLIS, global));
-            global.set("true", RockBoolean.TRUE);
-            global.set("false", RockBoolean.FALSE);
-            global.set("nil", RockNil.INSTANCE);
+            Environment global = RuntimeEnviroumentFactory.create();
 
 
             String line;

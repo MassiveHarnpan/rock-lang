@@ -84,6 +84,16 @@ public class RockClass extends RockAdapter {
     }
 
     @Override
+    public String asString() throws RockException {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<class:").append(name);
+        if (superClass != null && !"Object".equals(superClass.name)) {
+            sb.append(" extends ").append(superClass.name);
+        }
+        return  sb.append(">").toString();
+    }
+
+    @Override
     public Environment env() throws RockException {
         return outer;
     }

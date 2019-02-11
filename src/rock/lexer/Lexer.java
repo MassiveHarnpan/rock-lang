@@ -48,7 +48,7 @@ public class Lexer {
         reader.skipSpace();
         for (Tokenizer tokenizer : tokenizers) {
             Token token = tokenizer.next(reader);
-            if (token != null && token.type() != TokenType.COMMENT) {
+            if (token != null) {
                 return token;
             }
         }
@@ -101,7 +101,10 @@ public class Lexer {
             if (token == null) {
                 break;
             }
-            parsedTokens.add(token);
+            System.out.println(token);
+            if (token.type() != TokenType.COMMENT) {
+                parsedTokens.add(token);
+            }
         }
         return index < parsedTokens.size();
     }

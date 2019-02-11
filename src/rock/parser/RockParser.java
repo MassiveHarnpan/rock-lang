@@ -14,6 +14,7 @@ import rock.parser.element.Element;
 import rock.parser.element.ForkElement;
 import rock.parser.element.SequenceElement;
 import rock.parser.element.TokenElement;
+import rock.runtime.RuntimeEnviroumentFactory;
 import rock.token.Token;
 import rock.token.TokenType;
 import rock.util.LineReader;
@@ -66,13 +67,22 @@ public class RockParser extends Parser {
         Parser gettable = new Parser(Gettable.FACTORY, "gettable").then(primary).repeat(postfix, false).asAST();
 
 
-        Parser negative = new Parser(Negative.FACTORY, "negative").sep("-").then(gettable).asAST();
+        ForkElement origin = new ForkElement();
+        Parser negative = new Parser(Negative.FACTORY, "negative");
+        Parser not = new Parser(Not.FACTORY, "not");
+
+        negative.sep("-").then(origin).asAST();
+        not.sep("!").then(origin).asAST();
+        origin.or(negative).or(not).or(gettable);
+
         Element factor = new ForkElement().or(negative).or(gettable);
 
 
         Parser term = new Parser(Expr.FACTORY, "term").repeat(factor, factorOps, true).asAST();
         Parser bool = new Parser(Expr.FACTORY, "bool").repeat(term, termOps, true).asAST();
         expr.repeat(bool, boolOps, true).asAST();
+
+        Parser tertiary = new Parser(Tertiary.FACTORY, "tertiary").then(expr).sep("?").then(valuable).sep(":").then(valuable);
 
         Parser block = new Parser(Block.FACTORY).sep("{").repeat(stmt, false).sep("}").asAST();
 
@@ -81,21 +91,26 @@ public class RockParser extends Parser {
 
         SequenceElement valuableStmt = new SequenceElement(valuable, split(";"));
 
-        Parser ifStmt = new Parser(IfStmt.FACTORY).sep("if").sep("(").then(valuable).sep(")")
+        Parser ifStmt = new Parser(IfStmt.FACTORY, "ifStmt").sep("if").sep("(").then(valuable).sep(")")
                 .then(block).then(maybe(new SequenceElement(split("else"), block))).asAST();
 
-        Parser whileStmt = new Parser(WhileStmt.FACTORY).sep("while").sep("(").then(valuable).sep(")").then(block).asAST();
+        Parser whileStmt = new Parser(WhileStmt.FACTORY, "whileStmt").sep("while").sep("(").then(valuable).sep(")").then(block).asAST();
 
-        valuable.or(assign).or(expr);
+        valuable.or(assign).or(tertiary).or(expr);
         flow.or(ifStmt).or(whileStmt);
         stmt.or(flow).or(valuableStmt);
 
         Parser params = new Parser(ASTList.FACTORY).repeat(name, false).asAST();
-        Parser funcDef = new Parser(FuncDef.FACTORY).sep("def").then(name).sep("(").then(params).sep(")").then(block).asAST();
+        Parser funcDef = new Parser(FuncDef.FACTORY, "funcDef").sep("def").then(name).sep("(").then(params).sep(")").then(block).asAST();
         lambda.sep("(").then(params).sep(")").sep("->").then(block).asAST();
+
+        ForkElement classStmt = new ForkElement().or(funcDef).or(new SequenceElement(assign, split(";")));
+        Parser classBlock = new Parser(Block.FACTORY).sep("{").repeat(classStmt, false).sep("}").asAST();
+        Parser classDef = new Parser(ClassDef.FACTORY, "classDef").sep("class").then(name).fork().sep("extends").then(name).or().merge().then(classBlock).asAST();
 
         ForkElement progStmt = new ForkElement()
                 .or(funcDef)
+                .or(classDef)
                 .or(stmt);
 
         this.program = new Parser(Program.FACTORY, "program").repeat(new ForkElement().or(progStmt).or(split(";")), false).asAST();
@@ -151,7 +166,7 @@ public class RockParser extends Parser {
 //            }
 //        });
 
-        File file = new File("test/test2.roc");
+        File file = new File("test/test3.roc");
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "UTF-8")) {
             LineReader lr = new LineReader(file.getName(), reader);
             Lexer lexer = new Lexer(lr);
@@ -159,19 +174,7 @@ public class RockParser extends Parser {
             RockParser parser = new RockParser();
             ASTree ast = parser.parse(lexer);
             System.out.println(ast);
-            NestedEnvironment env = new NestedEnvironment();
-            env.set("print", new RockFunction("print", new String[]{"obj"}, new Evaluator() {
-                @Override
-                public Rock eval(Environment env, Rock base) throws RockException {
-                    System.out.println(env.get("obj").asString());
-                    return RockNil.INSTANCE;
-                }
-
-                @Override
-                public Rock set(Environment env, Rock base, Rock value) throws RockException {
-                    return RockNil.INSTANCE;
-                }
-            }, env));
+            Environment env = RuntimeEnviroumentFactory.create();
             System.out.println(ast.eval(env, null));
             //System.out.println(parser.parse(lexer).eval(new NestedEnvironment(), null));
         } catch (Exception e) {
