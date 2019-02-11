@@ -28,7 +28,7 @@ public class ASTList extends ASTree {
 
     @Override
     public Token token() {
-        throw null;
+        return null;
     }
 
     @Override

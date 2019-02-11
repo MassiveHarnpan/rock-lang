@@ -21,6 +21,7 @@ public class ClassObject extends RockClass {
     @Override
     public void initObject(RockObject ro) throws RockException {
         Environment env = ro.env();
+        env.set("this", ro);
         env.set("toString", new RockFunction("toString", new String[0], new EvaluatorAdapter() {
             @Override
             public Rock eval(Environment env, Rock base) throws RockException {

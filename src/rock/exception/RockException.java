@@ -27,7 +27,7 @@ public class RockException extends Exception {
     }
 
     public RockException(String message, Token token) {
-        super(message + " at " + location(token));
+        super(message + " about " + location(token));
         this.token = token;
     }
 

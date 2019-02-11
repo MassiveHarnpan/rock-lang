@@ -14,9 +14,14 @@ public class Dot extends ASTList {
     }
 
     public String name() {
-        return ((ASTLeaf) child(0)).token().literal();
+        return child(0).token().literal();
     }
 
+
+    @Override
+    public Rock eval(Environment env, Rock base) throws RockException {
+        return base.getMember(name());
+    }
 
     @Override
     public Rock set(Environment env, Rock base, Rock value) throws RockException {

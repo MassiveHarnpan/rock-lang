@@ -14,7 +14,7 @@ import java.util.List;
 public class IdfTokenizer extends Tokenizer {
 
     private static String[] WORDS = new String[]{
-            "class", "def", "var", "if", "else", "while", "return", "function"
+            "class", "def", "var", "if", "else", "while", "return", "function", "import"
     };
 
     private static String[] KEYS = new String[]{

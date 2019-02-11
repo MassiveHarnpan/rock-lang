@@ -22,11 +22,12 @@ def fib(n) {
 
 num = 50;
 
-
+/*
 while (num >= 0) {
     print("fib[" + num + "] = " + fib(num));
     num = num - 1;
 }
+*/
 
 
 lambda_expr = (name) -> {

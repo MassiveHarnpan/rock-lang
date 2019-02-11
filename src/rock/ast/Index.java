@@ -1,8 +1,6 @@
 package rock.ast;
 
-import rock.data.EnvProxy;
 import rock.data.Environment;
-import rock.data.Proxy;
 import rock.data.Rock;
 import rock.exception.RockException;
 
@@ -17,6 +15,11 @@ public class Index extends ASTList{
 
     public ASTree index() {
         return child(0);
+    }
+
+    @Override
+    public Rock eval(Environment env, Rock base) throws RockException {
+        return base.get(index().eval(env, null));
     }
 
     @Override

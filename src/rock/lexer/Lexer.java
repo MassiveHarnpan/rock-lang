@@ -101,7 +101,6 @@ public class Lexer {
             if (token == null) {
                 break;
             }
-            System.out.println(token);
             if (token.type() != TokenType.COMMENT) {
                 parsedTokens.add(token);
             }
@@ -128,7 +127,7 @@ public class Lexer {
             Token token;
             do {
                 token = lexer.read();
-                System.out.println(token.literal().replaceAll("\n", "#EOL#"));
+                //System.out.println(token.literal().replaceAll("\n", "#EOL#"));
             } while (token != Token.EOF);
         } catch (Exception e) {
             e.printStackTrace();

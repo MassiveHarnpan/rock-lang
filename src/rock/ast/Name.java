@@ -1,8 +1,6 @@
 package rock.ast;
 
-import rock.data.EnvProxy;
 import rock.data.Environment;
-import rock.data.Proxy;
 import rock.data.Rock;
 import rock.exception.RockException;
 import rock.token.Token;

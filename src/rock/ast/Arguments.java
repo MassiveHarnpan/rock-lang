@@ -20,6 +20,7 @@ public class Arguments extends ASTList {
         for (int i = 0; i < childCount(); i++) {
             args[i] = child(i).eval(env, null);
         }
+        //System.out.println("# base = " + base);
         return base.invoke(args);
     }
 

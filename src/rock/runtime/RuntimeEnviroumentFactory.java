@@ -21,6 +21,7 @@ public class RuntimeEnviroumentFactory {
 
         global.set("print", new RockFunction("print", new String[]{"msg"}, NativeMethods.PRINT, global));
         global.set("time", new RockFunction("time", new String[0], NativeMethods.CURRENT_TIME_MILLIS, global));
+        global.set("import", new RockFunction("import", new String[] {"fileName"}, NativeMethods.IMPORT, global));
 
         global.set("Object", ClassObject.create());
 

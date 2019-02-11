@@ -3,6 +3,7 @@ package rock.ast;
 import rock.data.Environment;
 import rock.data.Rock;
 import rock.exception.RockException;
+import rock.util.IndentationPrinter;
 
 import java.util.Iterator;
 
@@ -16,7 +17,7 @@ public class Gettable extends ASTList {
 
     @Override
     public Rock eval(Environment env, Rock base) throws RockException {
-        Rock rock = base;
+        Rock rock = null;
         for (int i = 0; i < childCount(); i++) {
             rock = child(i).eval(env, rock);
         }
@@ -31,5 +32,13 @@ public class Gettable extends ASTList {
             builder.append(itr.next());
         }
         return builder.toString();
+    }
+
+    @Override
+    public void write(IndentationPrinter printer) {
+        Iterator<ASTree> itr = iterator();
+        while (itr.hasNext()) {
+            itr.next().write(printer);
+        }
     }
 }

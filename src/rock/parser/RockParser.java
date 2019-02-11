@@ -46,9 +46,9 @@ public class RockParser extends Parser {
         Parser expr = new Parser(Expr.FACTORY, "expr");
 
         ForkElement primary = new ForkElement();
-        primary.or(lambda).or(name).or(number).or(string).or(new SequenceElement(split("("), expr, split(")")));
-
         ForkElement valuable = new ForkElement();
+        primary.or(lambda).or(name).or(number).or(string).or(new SequenceElement(split("("), valuable, split(")")));
+
         ForkElement flow = new ForkElement();
         ForkElement stmt = new ForkElement();
 
@@ -82,7 +82,7 @@ public class RockParser extends Parser {
         Parser bool = new Parser(Expr.FACTORY, "bool").repeat(term, termOps, true).asAST();
         expr.repeat(bool, boolOps, true).asAST();
 
-        Parser tertiary = new Parser(Tertiary.FACTORY, "tertiary").then(expr).sep("?").then(valuable).sep(":").then(valuable);
+        //Parser tertiary = new Parser(Tertiary.FACTORY, "tertiary").then(expr).sep("?").then(valuable).sep(":").then(valuable);
 
         Parser block = new Parser(Block.FACTORY).sep("{").repeat(stmt, false).sep("}").asAST();
 
@@ -96,7 +96,9 @@ public class RockParser extends Parser {
 
         Parser whileStmt = new Parser(WhileStmt.FACTORY, "whileStmt").sep("while").sep("(").then(valuable).sep(")").then(block).asAST();
 
-        valuable.or(assign).or(tertiary).or(expr);
+        Parser importStmt = new Parser(Import.FACTORY, "importStmt").sep("import").then(string).asAST();
+
+        valuable.or(importStmt).or(assign)/*.or(tertiary)*/.or(expr);
         flow.or(ifStmt).or(whileStmt);
         stmt.or(flow).or(valuableStmt);
 
@@ -107,6 +109,7 @@ public class RockParser extends Parser {
         ForkElement classStmt = new ForkElement().or(funcDef).or(new SequenceElement(assign, split(";")));
         Parser classBlock = new Parser(Block.FACTORY).sep("{").repeat(classStmt, false).sep("}").asAST();
         Parser classDef = new Parser(ClassDef.FACTORY, "classDef").sep("class").then(name).fork().sep("extends").then(name).or().merge().then(classBlock).asAST();
+
 
         ForkElement progStmt = new ForkElement()
                 .or(funcDef)

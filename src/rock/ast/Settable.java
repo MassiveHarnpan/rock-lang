@@ -1,7 +1,6 @@
 package rock.ast;
 
 import rock.data.Environment;
-import rock.data.Proxy;
 import rock.data.Rock;
 import rock.exception.RockException;
 import rock.util.IndentationPrinter;
@@ -31,8 +30,9 @@ public class Settable extends ASTList {
         for (int i = 0; i < childCount() - 1; i++) {
             rock = child(i).eval(env, rock);
         }
-        String name = child(childCount() - 1).token().literal();
-        return base == null ? env.set(name, value) : base.set(name, value);
+        ASTree dest = child(childCount() - 1);
+        //System.out.println(dest.getClass().getSimpleName() + " " + dest);
+        return dest.set(env, rock, value);
     }
 
 
